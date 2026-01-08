@@ -1,0 +1,661 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tema 4 · IPO · Banco 50</title>
+  <style>
+    :root{
+      --bg:#0b1220;--card:#121a2b;--text:#e7eefc;--muted:#9aa4b2;--border:#24304a;
+      --accent:#6ea8fe;--ok:#57d18a;--bad:#ff6b6b;--warn:#ffd166;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      background: radial-gradient(1200px 600px at 20% 0%, #132044 0%, var(--bg) 60%);
+      color:var(--text);
+    }
+    .wrap{max-width:980px;margin:0 auto;padding:22px 14px 48px;}
+    .top{display:flex;gap:12px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap}
+    h1{margin:0;font-size:20px}
+    .sub{margin:6px 0 0;color:var(--muted);font-size:13px;line-height:1.35}
+    .pillrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+    .pill{border:1px solid var(--border);color:var(--muted);padding:3px 10px;border-radius:999px;font-size:12px}
+    .card{
+      margin-top:14px; border:1px solid var(--border);
+      background: linear-gradient(180deg, rgba(18,26,43,.92), rgba(18,26,43,.7));
+      border-radius:16px; padding:14px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.25);
+    }
+    .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+    label{font-size:13px;color:var(--muted)}
+    select, input[type="number"]{
+      background:#0b1220;color:var(--text);border:1px solid var(--border);
+      padding:10px 10px;border-radius:12px;outline:none;
+    }
+    button{
+      background:rgba(110,168,254,.16);
+      color:var(--text);border:1px solid rgba(110,168,254,.45);
+      padding:10px 12px;border-radius:12px;cursor:pointer;
+      font-weight:800;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+      user-select:none;
+    }
+    button.primary{background:rgba(110,168,254,.85); color:#06101f; border-color:rgba(110,168,254,.85)}
+    button.good{background:rgba(87,209,138,.20); border-color:rgba(87,209,138,.55)}
+    button.ghost{background:transparent;border-color:var(--border);color:var(--muted)}
+    button:disabled{opacity:.45;cursor:not-allowed}
+    .qhead{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center}
+    .qmeta{color:var(--muted);font-size:12px}
+    .qtext{margin:10px 0 10px;font-size:16px;line-height:1.35}
+    .opts{display:grid;grid-template-columns:1fr;gap:10px;margin-top:8px}
+    .opt{
+      border:1px solid var(--border);
+      background: rgba(11,18,32,.55);
+      border-radius:14px;
+      padding:10px 10px;
+      display:flex;gap:10px;align-items:flex-start;
+    }
+    .opt input{margin-top:3px;transform:scale(1.15)}
+    .opt .txt{font-size:14px;line-height:1.3}
+    .bar{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;align-items:center}
+    .feedback{
+      margin-top:10px; border-radius:14px; padding:10px 12px; font-size:13px; line-height:1.35;
+      border:1px solid var(--border); background: rgba(11,18,32,.55);
+    }
+    .feedback.ok{border-color:rgba(87,209,138,.55); background: rgba(87,209,138,.10)}
+    .feedback.bad{border-color:rgba(255,107,107,.55); background: rgba(255,107,107,.10)}
+    .feedback.warn{border-color:rgba(255,209,102,.55); background: rgba(255,209,102,.10)}
+    .hr{height:1px;background:rgba(36,48,74,.7);margin:14px 0}
+    details.reviewItem{
+      border:1px solid var(--border); border-radius:14px; padding:10px 12px;
+      background: rgba(11,18,32,.55); margin-top:10px;
+    }
+    summary{cursor:pointer;font-weight:900}
+    .small{color:var(--muted);font-size:12px}
+    .tag{display:inline-block;border:1px solid var(--border);border-radius:999px;padding:2px 8px;margin-left:8px;color:var(--muted);font-size:12px}
+    .ans{margin-top:8px;font-size:13px;line-height:1.35}
+    .okText{color:var(--ok);font-weight:900}
+    .badText{color:var(--bad);font-weight:900}
+    .warnText{color:var(--warn);font-weight:900}
+    .footerNote{margin-top:10px;color:var(--muted);font-size:12px}
+    @media (max-width:720px){
+      button{width:100%}
+      .bar{flex-direction:column;align-items:stretch}
+      .qhead{flex-direction:column;align-items:flex-start}
+    }
+  </style>
+</head>
+
+<body>
+<div class="wrap">
+  <div class="top">
+    <div>
+      <h1>Tema 4 · Internacionalización y Localización (Banco 50)</h1>
+      <p class="sub">
+        Puntuación: <b>+1</b> correcta, <b>−1/3</b> incorrecta, <b>0</b> en blanco.
+        Navegación adelante/atrás + revisión final con respuesta correcta.
+      </p>
+      <div class="pillrow">
+        <span class="pill">Aleatorio</span>
+        <span class="pill">Móvil-friendly</span>
+        <span class="pill">Revisión final</span>
+      </div>
+    </div>
+  </div>
+
+  <div id="setup" class="card">
+    <div class="row">
+      <div>
+        <label for="nq">¿Cuántas preguntas quieres hacer?</label><br/>
+        <input id="nq" type="number" min="1" max="50" value="20" />
+        <span class="small"> (máx. 50)</span>
+      </div>
+      <div>
+        <label for="seed">Orden aleatorio</label><br/>
+        <select id="seed">
+          <option value="random" selected>Barajar cada vez</option>
+          <option value="fixed">Orden fijo (para repetir)</option>
+        </select>
+      </div>
+      <div style="flex:1"></div>
+      <div>
+        <button id="btnStart" class="primary">Empezar test</button>
+      </div>
+    </div>
+    <div class="footerNote">
+      iPhone: abre con Safari en GitHub Pages y usa “Añadir a pantalla de inicio” para usarlo tipo app.
+    </div>
+  </div>
+
+  <div id="quiz" class="card" style="display:none;">
+    <div class="qhead">
+      <div class="qmeta" id="qmeta">Pregunta 1/20</div>
+      <div class="qmeta" id="scoreLive">Aciertos: 0 · Fallos: 0 · En blanco: 0 · Nota: 0.00</div>
+    </div>
+
+    <div class="qtext" id="qtext"></div>
+    <div class="opts" id="opts"></div>
+
+    <div class="bar">
+      <button id="btnPrev" class="ghost">⬅️ Atrás</button>
+      <button id="btnNext" class="ghost">Siguiente ➡️</button>
+      <div style="flex:1"></div>
+      <button id="btnSkip" class="ghost">Dejar en blanco</button>
+      <button id="btnConfirm" class="primary">Confirmar respuesta</button>
+      <button id="btnFinish" class="good">Finalizar test</button>
+    </div>
+
+    <div id="feedback" class="feedback" style="display:none;"></div>
+  </div>
+
+  <div id="results" class="card" style="display:none;">
+    <h2 style="margin:0 0 6px;">Resultados</h2>
+    <div class="qmeta" id="finalLine"></div>
+    <div class="hr"></div>
+    <div class="bar">
+      <button id="btnExpandAll" class="ghost">Expandir todo</button>
+      <button id="btnCollapseAll" class="ghost">Colapsar todo</button>
+      <div style="flex:1"></div>
+      <button id="btnBackToSetup" class="primary">Hacer otro test</button>
+    </div>
+    <div id="review"></div>
+  </div>
+</div>
+
+<script>
+/* ========= TAP FIX (evita doble-disparo en móvil) =========
+   - En iOS/Android puede dispararse click después de touch/pointer.
+   - Solución: un único handler con “cooldown” por elemento.
+*/
+function bindTap(el, fn){
+  let last = 0;
+  const wrapped = (e) => {
+    const now = Date.now();
+    if (now - last < 350) return; // bloquea el segundo evento
+    last = now;
+    e.preventDefault();
+    fn();
+  };
+  el.addEventListener("pointerup", wrapped, {passive:false});
+  el.addEventListener("click", wrapped, {passive:false}); // fallback escritorio / algunos móviles
+}
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+function clamp(n, lo, hi){ return Math.max(lo, Math.min(hi, n)); }
+function fmt(n){ return (Math.round(n*100)/100).toFixed(2); }
+function escapeHtml(s){
+  return s.replace(/[&<>"']/g, (c)=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+}
+
+/* ========= BANCO 50 (Tema 4) ========= */
+const BANK = [
+  {q:"Un software internacionalizado es un producto que…",
+   a:["dispone de varias versiones de un mismo contenido en diferentes idiomas o formatos.","solo está traducido a un idioma principal y sus variantes regionales.","incluye texto en el código para simplificar la traducción posterior.","se limita a mercados locales para evitar ajustes culturales."], c:0,
+   e:"Software internacionalizado: varias versiones del mismo contenido para distintos idiomas/formatos."},
+
+  {q:"Objetivo principal de internacionalizar un producto:",
+   a:["hacer llegar el producto a mercados internacionales.","reducir el tamaño del ejecutable al mínimo.","eliminar la necesidad de documentación.","evitar el mantenimiento del software en el tiempo."], c:0,
+   e:"Se busca llegar a mercados internacionales."},
+
+  {q:"Problema típico al internacionalizar una interfaz:",
+   a:["ajustar la interfaz a los distintos destinos culturales/lingüísticos.","aumentar la velocidad de CPU al cargar pantallas.","forzar un único formato numérico universal.","impedir que cambie el idioma en ejecución."], c:0,
+   e:"La dificultad es adaptar UI a distintos contextos y regiones."},
+
+  {q:"Internacionalización (i18n) es el proceso de…",
+   a:["diseñar una aplicación para adaptarla a lenguajes/regiones sin cambiar el código.","traducir directamente la interfaz dentro del código fuente.","crear dos ejecutables diferentes por cada idioma.","sustituir iconos por texto para evitar problemas culturales."], c:0,
+   e:"i18n: adaptar sin cambiar código (texto fuera, recursos)."},
+  
+  {q:"Un programa internacionalizado NO debería tener en el código…",
+   a:["elementos dependientes de lengua o contexto cultural.","lógica de negocio y estructuras de control.","módulos de acceso a datos y red.","funciones reutilizables y librerías comunes."], c:0,
+   e:"Los elementos dependientes de lengua/cultura deben estar fuera del código."},
+
+  {q:"Localización (l10n) es el proceso de…",
+   a:["adaptar software a una región o idioma añadiendo componentes específicos y traduciendo texto.","diseñar la aplicación para que no requiera cambios culturales.","eliminar formatos de fecha/hora para simplificar.","convertir todo a ASCII para compatibilidad."], c:0,
+   e:"l10n: adaptar a región concreta traduciendo y añadiendo componentes locales."},
+
+  {q:"¿Qué afirmación es una ventaja de internacionalizar desde el principio?",
+   a:["añadir soporte internacional al final puede ser menos estable que hacerlo durante el desarrollo.","es mejor traducir al final porque siempre es más estable.","la internacionalización solo afecta a iconos, no al texto.","se evita por completo el mantenimiento de recursos."], c:0,
+   e:"Se indica que añadir soporte al final puede hacerlo menos estable."},
+
+  {q:"Según el tema, una ventaja es que…",
+   a:["el mismo ejecutable puede funcionar en todo el mundo.","hacen falta ejecutables distintos por cada región siempre.","solo se puede soportar un alfabeto por aplicación.","el usuario no podrá cambiar el idioma nunca."], c:0,
+   e:"Se destaca: mismo ejecutable global."},
+
+  {q:"Elementos de interfaz a considerar en internacionalización (NO es uno típico):",
+   a:["unidades de medida.","colores.","calendarios/formatos de fecha y hora.","compilador y optimizaciones de CPU."], c:3,
+   e:"Se listan cultura, iconos, colores, fechas/horas, números/moneda, ordenación, unidades, escritura."},
+
+  {q:"Ejemplo cultural: en algunas culturas la mano izquierda puede ser…",
+   a:["ofensiva.","un saludo universal.","símbolo de buena suerte siempre.","irrelevante para la interfaz."], c:0,
+   e:"Se menciona como ejemplo de elemento cultural."},
+
+  {q:"Muchos iconos dependen de lengua/cultura. Un ejemplo citado es:",
+   a:["buzón de correo.","cursor de texto.","barra de progreso genérica.","rectángulo vacío sin significado."], c:0,
+   e:"Ejemplos: buzón de correo, corrector ortográfico, tick."},
+
+  {q:"Sobre colores, el tema indica que en occidente el negro suele asociarse a…",
+   a:["luto y funerales.","matrimonio y nacimiento.","festividad religiosa.","pureza y éxito."], c:0,
+   e:"Occidental: negro=luto."},
+
+  {q:"Sobre colores, el tema indica que en oriente el blanco suele asociarse a…",
+   a:["luto.","nacimiento.","mala suerte siempre.","precaución (como ámbar)."], c:0,
+   e:"Oriental: blanco=luto (ejemplo)."},
+
+  {q:"Formatos de fecha gregoriana citados (países anglófonos suelen usar):",
+   a:["mm/dd/aaaa.","dd/mm/aaaa.","aaaa/mm/dd.","dd/aaaa/mm."], c:0,
+   e:"Se cita mm/dd/aaaa en países de habla inglesa."},
+
+  {q:"Ejemplo de formato numérico/moneda según el tema: USA suele mostrar…",
+   a:["$ 1,234.56","$ 1.234,56","$ 1 234,56","$ 1234,56"], c:0,
+   e:"USA: $ 1,234.56."},
+
+  {q:"En euros, un ejemplo de formato dado es:",
+   a:["1.234,56 €","1,234.56 €","€ 1,234.56","€ 1.234,56"], c:0,
+   e:"Euro: 1.234,56 €."},
+
+  {q:"La ordenación de caracteres es compleja porque…",
+   a:["las reglas pueden considerar más de un carácter a la vez según idioma.","siempre es A-Z y no cambia nunca.","solo afecta a números y no a letras.","se resuelve usando ASCII sin excepciones."], c:0,
+   e:"Se menciona que hay reglas más complejas (histor. 'ch'/'ll')."},
+
+  {q:"Sobre unidades de medida: la mayoría usa sistema métrico, excepto…",
+   a:["Estados Unidos.","Portugal.","Italia.","Japón."], c:0,
+   e:"Se indica que EEUU usa milla/pulgada, etc."},
+
+  {q:"Las escrituras se clasifican (según el tema) en…",
+   a:["ideogramas y fonéticas.","latinas y griegas exclusivamente.","alfabéticas y binarias.","verticales y horizontales."], c:0,
+   e:"Clasificación: ideogramas y fonéticas."},
+
+  {q:"Un ideograma se caracteriza por…",
+   a:["tener significado especial sin relación directa con su pronunciación.","representar siempre un sonido concreto.","ser siempre una letra mayúscula/minúscula.","ser una abreviatura ASCII estándar."], c:0,
+   e:"Definición del tema."},
+
+  {q:"Las escrituras occidentales citadas son:",
+   a:["latín, griego y cirílico.","latín, árabe y hebreo.","chino, japonés y coreano.","tailandés, hebreo y cirílico."], c:0,
+   e:"Occidentales: latín, griego, cirílico."},
+
+  {q:"Característica común de escrituras occidentales (según el tema):",
+   a:["son fonéticas.","son ideográficas.","se leen siempre derecha a izquierda.","no distinguen mayúsculas/minúsculas."], c:0,
+   e:"Occidentales: fonéticas, izq→der, may/min, numeración arábiga."},
+
+  {q:"La escritura latina se describe como…",
+   a:["la más usada y proviene del latín con letras añadidas (p.ej., J, W).","exclusiva del este de Europa.","basada en ideogramas chinos.","un conjunto fijo sin diacríticos."], c:0,
+   e:"Tema: latín muy extendido; añade letras J, W; diacríticos."},
+
+  {q:"En castellano, entre los caracteres/diacríticos citados aparece:",
+   a:["ñ","ø","ß","æ"], c:0,
+   e:"Se listan á,é,í,ó,ú,ü,ñ,¿,¡."},
+
+  {q:"Las escrituras del extremo oriente están basadas en…",
+   a:["caracteres ideográficos chinos.","alfabeto latino extendido.","ASCII de 7 bits.","códigos únicamente de 256 caracteres."], c:0,
+   e:"Basadas en ideogramas chinos; miles de caracteres."},
+
+  {q:"Según el tema: mínimo para ‘conversar’ en estas escrituras es aprox…",
+   a:["3.000 caracteres.","300 caracteres.","30.000 caracteres.","50.000 caracteres."], c:0,
+   e:"Se indica mínimo para conversar: 3.000 caracteres."},
+
+  {q:"Un esquema de codificación se concreta mediante…",
+   a:["mapas de caracteres.","paletas de color universales.","solo tipografías locales.","menús contextuales."], c:0,
+   e:"Representación informática se hace con esquemas y mapas de caracteres."},
+
+  {q:"ASCII (según el tema) está basado en alfabeto latino y tiene…",
+   a:["128 caracteres.","256 caracteres.","1024 caracteres.","65.536 caracteres."], c:0,
+   e:"ASCII: 128 caracteres."},
+
+  {q:"En ASCII, los códigos 0–31 y 127 suelen ser…",
+   a:["caracteres especiales/de control.","letras minúsculas comunes.","símbolos de moneda europeos.","ideogramas."], c:0,
+   e:"Rango de control: 0–31 y 127."},
+
+  {q:"En ASCII, un ejemplo citado: 65 corresponde a…",
+   a:["‘A’.","‘a’.","‘Z’.","‘0’."], c:0,
+   e:"Ejemplo del tema: 65='A'."},
+
+  {q:"En ASCII, un ejemplo citado: 97 corresponde a…",
+   a:["‘a’.","‘A’.","‘1’.","‘_’."], c:0,
+   e:"Ejemplo del tema: 97='a'."},
+
+  {q:"Los mapas de caracteres de un octeto (SBCS) llegan hasta…",
+   a:["256 caracteres.","128 caracteres.","3.000 caracteres.","65.536 caracteres."], c:0,
+   e:"SBCS: 256 (2^8)."},
+
+  {q:"Las ISO 8859 se describen como…",
+   a:["extensiones de ASCII con 128 caracteres adicionales (128–255).","un formato fijo de 16 bits para todo.","un estándar exclusivo de China/Japón/Corea.","un sistema sin relación con ASCII."], c:0,
+   e:"ISO 8859: ASCII extendido (hasta 256)."},
+
+  {q:"ISO 8859-1 (según el tema) corresponde a…",
+   a:["Latín Europa del oeste (Occidental).","Cirílico Europa del este.","Griego.","Árabe."], c:0,
+   e:"Listado del tema."},
+
+  {q:"Para escrituras ideográficas (>256 caracteres) se usa…",
+   a:["DBCS (doble octeto).","ASCII estricto.","solo ISO 8859-1.","un byte fijo siempre."], c:0,
+   e:"DBCS para superar 256."},
+
+  {q:"DBCS usa notación de 16 bits, con capacidad aprox de…",
+   a:["65.536 caracteres.","256 caracteres.","128 caracteres.","3.000 caracteres."], c:0,
+   e:"2^16 = 65.536."},
+
+  {q:"En DBCS, el código contiene caracteres de…",
+   a:["1 y 2 octetos.","solo 2 octetos siempre.","solo 1 octeto siempre.","3 y 4 octetos."], c:0,
+   e:"Contiene 1 y 2 octetos; 1 octeto corresponde con ASCII."},
+
+  {q:"El estándar de ejemplo para Japón citado es…",
+   a:["JIS (Japan Industry Standard).","ISO 8859-1.","ASCII-8.","Unicode-Private."], c:0,
+   e:"Tema: JIS."},
+
+  {q:"Según el tema, JIS nivel 1 contiene aproximadamente…",
+   a:["3.000 caracteres.","300 caracteres.","30.000 caracteres.","6.000 caracteres."], c:0,
+   e:"JIS nivel 1 ~3.000."},
+
+  {q:"En los problemas previos a Unicode se menciona…",
+   a:["duplicidad e inconsistencia por conflicto entre estándares.","que ASCII ya cubría todo el mundo sin límites.","que internet redujo la demanda de un conjunto único.","que el problema era solo de colores."], c:0,
+   e:"Tema: duplicidad, múltiples códigos inconsistentes; ASCII limitado; Internet aumenta demanda."},
+
+  {q:"Unicode se describe como un esquema…",
+   a:["uniforme y de tamaño fijo para caracteres de escrituras importantes y símbolos.","solo para alfabeto latino.","idéntico a ISO 8859-1 sin cambios.","que requiere secuencias ESCAPE para cambiar de modo."], c:0,
+   e:"Uniforme, fijo; mezcla alfabetos/ideogramas/símbolos."},
+
+  {q:"Según el tema, Unicode es compatible con…",
+   a:["ASCII.","JIS nivel 3.","solo hebreo.","solo ISO 8859-6."], c:0,
+   e:"Se indica compatible con ASCII."},
+
+  {q:"Unicode (según el tema) utiliza una codificación de…",
+   a:["16 bits.","8 bits.","32 bits obligatorios.","7 bits."], c:0,
+   e:"Se indica 16 bits."},
+
+  {q:"Unicode no necesita…",
+   a:["secuencias de ESCAPE.","tipografías.","mapas de caracteres.","números arábigos."], c:0,
+   e:"Tema: no necesita ESCAPE."},
+
+  {q:"En resumen, Unicode es (tríada del tema):",
+   a:["Universal, Uniforme y No ambiguo.","Rápido, Ligero y Visual.","Local, Variable y Ambiguo.","Cultural, Cromático y Vertical."], c:0,
+   e:"Resumen textual."},
+
+  {q:"Modelo ‘Producto localizado’ (según el tema):",
+   a:["Recursos localizados + Código de la aplicación = Producto localizado.","Código único + traducción en comentarios = producto localizado.","Iconos locales + colores locales = producto localizado.","Solo cambiar tipografía = producto localizado."], c:0,
+   e:"Esquema presentado."},
+
+  {q:"Los ‘recursos localizados’ se describe que…",
+   a:["contienen datos (cadenas/gráficos) pero no código.","contienen solo el código ejecutable.","son librerías del sistema operativo.","son siempre bases de datos SQL."], c:0,
+   e:"Recursos: datos, cadenas y gráficos, elementos específicos."},
+
+  {q:"Clave de diseño para localizar: primero…",
+   a:["extraer textos/datos/gráficos a ficheros separados.","meter todo el texto dentro del código para controlarlo.","traducir primero y luego separar recursos.","forzar un único idioma interno."], c:0,
+   e:"Tema: extraer recursos a fichero separado."},
+
+  {q:"Otra clave citada es…",
+   a:["organizar/documentar ficheros y crear estructura de directorios por localización.","usar solo menús densos para ahorrar espacio.","limitar textos a un único tamaño fijo.","evitar evaluar con usuarios locales."], c:0,
+   e:"Se recomienda estructura por ramas de localización."},
+
+  {q:"Regla para expansión de texto traducido (tema):",
+   a:["permitir un 30% de expansión.","permitir solo un 5% de expansión.","prohibir que el texto cambie de tamaño.","mantener siempre ancho fijo sin excepciones."], c:0,
+   e:"Regla 30%."},
+
+  {q:"En idiomas como hebreo y árabe, el texto suele escribirse…",
+   a:["de derecha a izquierda, y puede requerir invertir la presentación.","de izquierda a derecha siempre.","solo en vertical.","sin signos diacríticos."], c:0,
+   e:"Tema: RTL e invertir presentación."},
+
+  {q:"Sobre menús: el tema recomienda evitar menús muy densos y cita un límite de…",
+   a:["80 caracteres.","800 caracteres.","30 caracteres.","160 caracteres."], c:0,
+   e:"Se cita límite 80 caracteres."},
+
+  {q:"Problema típico con teclas aceleradoras al traducir:",
+   a:["si coinciden con la inicial de una palabra, puede no funcionar al cambiar de idioma.","no existen en interfaces gráficas.","obligan a usar Unicode siempre.","solo afectan a números y monedas."], c:0,
+   e:"Tema: aceleradoras suelen usar inicial; al traducir cambia; hay que permitir otra tecla."},
+
+  {q:"Selección de idioma: recomendación del tema:",
+   a:["usar el nombre del idioma en su escritura nativa (ej.: ‘español’, no ‘spanish’).","usar siempre inglés para que sea estándar.","usar banderas siempre como única opción.","ocultar la opción de idioma para simplificar."], c:0,
+   e:"Recomendación explícita."},
+
+  {q:"Menú desplegable para idioma: ventaja citada:",
+   a:["ahorra espacio.","permite ver todos los idiomas sin desplegar.","facilita usar gráficos en opciones.","mejora usabilidad cuando la lista es muy larga."], c:0,
+   e:"Pros: ahorro de espacio."},
+
+  {q:"Menú desplegable para idioma: desventaja citada:",
+   a:["hay que desplegar y si la lista es larga puede ser mala usabilidad.","no consume espacio nunca.","permite usar gráficos con facilidad.","no requiere etiqueta para la lista."], c:0,
+   e:"Contras: desplegar, sin gráficos, difícil etiqueta, mala usabilidad si lista larga."},
+
+  {q:"Alternativas al desplegable para elegir idioma (tema):",
+   a:["enlaces directos o mapa.","solo comandos de terminal.","solo reconocimiento de voz.","solo iconos abstractos."], c:0,
+   e:"Tema: alternativas: enlaces directos, mapa."},
+];
+
+/* ========= ESTADO ========= */
+let session = [];
+let idx = 0;
+let answers = [];
+let fixedOrder = false;
+
+/* ========= DOM ========= */
+const setupEl = document.getElementById("setup");
+const quizEl = document.getElementById("quiz");
+const resultsEl = document.getElementById("results");
+const nqEl = document.getElementById("nq");
+const seedEl = document.getElementById("seed");
+
+const qmetaEl = document.getElementById("qmeta");
+const scoreLiveEl = document.getElementById("scoreLive");
+const qtextEl = document.getElementById("qtext");
+const optsEl = document.getElementById("opts");
+const feedbackEl = document.getElementById("feedback");
+
+const btnStart = document.getElementById("btnStart");
+const btnPrev = document.getElementById("btnPrev");
+const btnNext = document.getElementById("btnNext");
+const btnSkip = document.getElementById("btnSkip");
+const btnConfirm = document.getElementById("btnConfirm");
+const btnFinish = document.getElementById("btnFinish");
+
+const finalLineEl = document.getElementById("finalLine");
+const reviewEl = document.getElementById("review");
+const btnExpandAll = document.getElementById("btnExpandAll");
+const btnCollapseAll = document.getElementById("btnCollapseAll");
+const btnBackToSetup = document.getElementById("btnBackToSetup");
+
+/* ========= LÓGICA ========= */
+function buildSession(n){
+  const N = clamp(parseInt(n,10) || 20, 1, BANK.length);
+  fixedOrder = (seedEl.value === "fixed");
+
+  let pool = BANK.map((q, i) => ({...q, _id:i}));
+  pool = fixedOrder ? pool : shuffle(pool);
+  const picked = pool.slice(0, N);
+
+  session = picked.map(item => {
+    const options = item.a.map((txt, i) => ({txt, origIndex:i}));
+    const mixed = fixedOrder ? options : shuffle(options);
+    const newCorrect = mixed.findIndex(o => o.origIndex === item.c);
+    return {
+      id: item._id,
+      q: item.q,
+      opts: mixed.map(o => o.txt),
+      correct: newCorrect,
+      explain: item.e
+    };
+  });
+
+  answers = session.map(_ => ({
+    sel: null,
+    graded: false,
+    isBlank: true,
+    isCorrect: false,
+    points: 0
+  }));
+  idx = 0;
+}
+
+function renderQuestion(){
+  const total = session.length;
+  const item = session[idx];
+
+  qmetaEl.textContent = `Pregunta ${idx+1}/${total}`;
+  qtextEl.textContent = item.q;
+
+  optsEl.innerHTML = "";
+  const name = `q_${idx}`;
+
+  item.opts.forEach((txt, i) => {
+    const lab = document.createElement("label");
+    lab.className = "opt";
+    lab.innerHTML = `
+      <input type="radio" name="${name}" value="${i}" />
+      <div class="txt"><b>${String.fromCharCode(65+i)})</b> ${escapeHtml(txt)}</div>
+    `;
+    optsEl.appendChild(lab);
+  });
+
+  if(answers[idx].sel !== null){
+    const r = optsEl.querySelector(\`input[value="\${answers[idx].sel}"]\`);
+    if(r) r.checked = true;
+  }
+
+  feedbackEl.style.display = "none";
+  feedbackEl.className = "feedback";
+
+  btnPrev.disabled = (idx === 0);
+  btnNext.disabled = (idx === total-1);
+
+  updateLiveScore();
+}
+
+function saveSelectionFromUI(){
+  const checked = optsEl.querySelector('input[type="radio"]:checked');
+  if(checked){
+    answers[idx].sel = parseInt(checked.value,10);
+    answers[idx].isBlank = false;
+  }else{
+    answers[idx].sel = null;
+    answers[idx].isBlank = true;
+  }
+}
+
+function showFeedback(kind, title, html){
+  feedbackEl.style.display = "block";
+  feedbackEl.className = `feedback ${kind}`;
+  feedbackEl.innerHTML = `<b>${title}</b><div class="small" style="margin-top:4px">${html}</div>`;
+}
+
+function gradeCurrent(forceBlank){
+  if(forceBlank){
+    answers[idx].sel = null;
+    answers[idx].isBlank = true;
+  }else{
+    saveSelectionFromUI();
+  }
+
+  const item = session[idx];
+  const a = answers[idx];
+
+  a.graded = true;
+
+  if(a.isBlank){
+    a.isCorrect = false;
+    a.points = 0;
+    showFeedback("warn", "En blanco", `No suma ni resta. Correcta: <b>${String.fromCharCode(65+item.correct)})</b> ${escapeHtml(item.opts[item.correct])}`);
+  }else{
+    a.isCorrect = (a.sel === item.correct);
+    a.points = a.isCorrect ? 1 : (-1/3);
+    showFeedback(a.isCorrect ? "ok" : "bad",
+      a.isCorrect ? "Correcta ✅" : "Incorrecta ❌",
+      `Correcta: <b>${String.fromCharCode(65+item.correct)})</b> ${escapeHtml(item.opts[item.correct])}<br/><span class="small">${escapeHtml(item.explain || "")}</span>`
+    );
+  }
+
+  updateLiveScore();
+}
+
+function computeScore(){
+  let ok=0, bad=0, blank=0, points=0;
+  answers.forEach(a=>{
+    if(a.isBlank){ blank++; }
+    else if(a.isCorrect){ ok++; }
+    else { bad++; }
+    points += a.points;
+  });
+  return {ok,bad,blank,points};
+}
+
+function updateLiveScore(){
+  const s = computeScore();
+  scoreLiveEl.textContent = `Aciertos: ${s.ok} · Fallos: ${s.bad} · En blanco: ${s.blank} · Nota: ${fmt(s.points)}`;
+}
+
+function finish(){
+  const s = computeScore();
+  quizEl.style.display = "none";
+  resultsEl.style.display = "block";
+
+  finalLineEl.innerHTML = `
+    <span class="okText">Aciertos:</span> ${s.ok} ·
+    <span class="badText">Fallos:</span> ${s.bad} ·
+    <span class="warnText">En blanco:</span> ${s.blank} ·
+    <b>Nota final:</b> ${fmt(s.points)}
+    <span class="tag">+1 / −0.33 / 0</span>
+  `;
+
+  reviewEl.innerHTML = "";
+  session.forEach((item, i) => {
+    const a = answers[i];
+    const status = a.isBlank ? "En blanco" : (a.isCorrect ? "Correcta" : "Incorrecta");
+    const statusClass = a.isBlank ? "warnText" : (a.isCorrect ? "okText" : "badText");
+    const selTxt = a.isBlank ? "—" : `${String.fromCharCode(65+a.sel)}) ${item.opts[a.sel]}`;
+    const corTxt = `${String.fromCharCode(65+item.correct)}) ${item.opts[item.correct]}`;
+
+    const det = document.createElement("details");
+    det.className = "reviewItem";
+    det.innerHTML = `
+      <summary>Pregunta ${i+1}: <span class="${statusClass}">${status}</span> <span class="tag">${fmt(a.points)} pts</span></summary>
+      <div class="ans"><b>Enunciado:</b> ${escapeHtml(item.q)}</div>
+      <div class="ans"><b>Tu respuesta:</b> ${escapeHtml(selTxt)}</div>
+      <div class="ans"><b>Correcta:</b> ${escapeHtml(corTxt)}</div>
+      ${item.explain ? `<div class="ans small"><b>Nota:</b> ${escapeHtml(item.explain)}</div>` : ``}
+    `;
+    reviewEl.appendChild(det);
+  });
+}
+
+function hardReset(){
+  resultsEl.style.display = "none";
+  quizEl.style.display = "none";
+  setupEl.style.display = "block";
+  feedbackEl.style.display = "none";
+}
+
+/* ========= EVENTOS ========= */
+bindTap(btnStart, ()=>{
+  const n = clamp(parseInt(nqEl.value,10) || 20, 1, BANK.length);
+  nqEl.value = n;
+  buildSession(n);
+  setupEl.style.display = "none";
+  resultsEl.style.display = "none";
+  quizEl.style.display = "block";
+  renderQuestion();
+});
+
+bindTap(btnPrev, ()=>{
+  saveSelectionFromUI();
+  if(idx>0){ idx--; renderQuestion(); }
+});
+
+bindTap(btnNext, ()=>{
+  saveSelectionFromUI();
+  if(idx<session.length-1){ idx++; renderQuestion(); }
+});
+
+bindTap(btnConfirm, ()=> gradeCurrent(false));
+bindTap(btnSkip, ()=> gradeCurrent(true));
+bindTap(btnFinish, finish);
+
+bindTap(btnExpandAll, ()=> document.querySelectorAll("details.reviewItem").forEach(d=> d.open = true));
+bindTap(btnCollapseAll, ()=> document.querySelectorAll("details.reviewItem").forEach(d=> d.open = false));
+bindTap(btnBackToSetup, hardReset);
+</script>
+</body>
+</html>
