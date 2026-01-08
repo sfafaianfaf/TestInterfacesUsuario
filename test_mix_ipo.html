@@ -246,10 +246,14 @@
 
   // ---- Cargar BANK desde un HTML (busca: const BANK = [ ... ])
   function extractBankArrayLiteral(html){
-    const m = html.match(/const\\s+BANK\\s*=\\s*\\[/);
+    // ✅ FIX: aquí NO van dobles backslashes
+    const m = html.match(/const\s+BANK\s*=\s*\[/);
     if(!m) return null;
 
-    const start = m.index + m[0].lastIndexOf("[");
+    // desde el primer '[' que aparece después del match
+    const start = html.indexOf("[", m.index);
+    if(start < 0) return null;
+
     let i = start;
     let depth = 0;
     let str = null;
@@ -260,7 +264,7 @@
 
       if(str){
         if(esc){ esc = false; }
-        else if(ch === "\\\\"){ esc = true; }
+        else if(ch === "\\"){ esc = true; }
         else if(ch === str){ str = null; }
       }else{
         if(ch === "'" || ch === '"' || ch === "`"){ str = ch; }
@@ -285,24 +289,26 @@
     if(!arr) throw new Error(`No encontré "const BANK = [...]" en ${file}`);
 
     // Convierte "[{...}]" a array real (los objetos son literales JS)
-    const bank = Function("return " + arr)();
+    const raw = Function("return " + arr)();
 
-    // Normaliza formato: (tema, q, options, a, exp)
-    // Tema1/Tema6 ya van con topic/options/a/exp.
-    // Tema2/Tema3/Tema4/Tema5 pueden ir con otras claves; intentamos adaptarlo.
-    return bank.map(item=>{
-      const topic = item.topic || item.tema || item.t || "";
-      const q = item.q || item.p || item.question || item.enunciado || "";
-      const options = item.options || item.opts || item.a || item.opciones || [];
-      const a = (typeof item.a === "number") ? item.a : (typeof item.c === "number" ? item.c : 0);
-      const exp = item.exp || item.e || item.explain || "";
+    // Normaliza: {topic, q, options, a, exp}
+    return raw.map(item=>{
+      const topic = item.topic ?? item.tema ?? item.t ?? "";
+      const q = item.q ?? item.p ?? item.question ?? item.enunciado ?? "";
+      const options = item.options ?? item.opts ?? item.opciones ?? [];
+      const a =
+        (typeof item.a === "number") ? item.a :
+        (typeof item.correct === "number") ? item.correct :
+        (typeof item.c === "number") ? item.c :
+        0;
+      const exp = item.exp ?? item.e ?? item.explain ?? "";
       return { topic, q, options, a, exp };
-    }).filter(x => x.q && x.options && x.options.length >= 4);
+    }).filter(x => x.q && Array.isArray(x.options) && x.options.length >= 4);
   }
 
   // ---- Estado del MIX
-  let BANK_A = []; // temas 1-3
-  let BANK_B = []; // temas 4-6
+  let BANK_A = []; // temas 1-3 (66%)
+  let BANK_B = []; // temas 4-6 (34%)
   let LOADED = false;
 
   // ---- Estado de sesión
@@ -423,9 +429,8 @@
       optionsEl.appendChild(lab);
     });
 
-    // restaurar selección marcada (aunque no confirmada)
     if(answers[idx].sel !== null){
-      const r = optionsEl.querySelector(`input[value="${answers[idx].sel}"]`);
+      const r = optionsEl.querySelector(\`input[value="\${answers[idx].sel}"]\`);
       if(r) r.checked = true;
     }
 
@@ -487,7 +492,6 @@
   }
 
   function finish(){
-    // si alguien marca sin confirmar, NO se puntúa (igual que tus otros tests)
     summaryEl.style.display = "block";
 
     const s = compute();
@@ -519,25 +523,17 @@
     });
   }
 
-  // --- Construye MIX
-  function pickTop(bank, n){
-    // “más importantes” (aprox): pillamos el inicio del banco (suele estar ordenado por conceptos)
-    return bank.slice(0, Math.max(0, Math.min(n, bank.length)));
-  }
-
+  // --- Construye MIX 66/34 usando TODO el banco (T1-3) vs (T4-6)
   function buildSession(N){
     const n = Math.max(10, Math.min(60, parseInt(N,10) || 30));
     mode = modeSelectEl.value;
 
-    // 66/34 aprox
     let nA = Math.round(n * 0.66);
     let nB = n - nA;
 
-    // por si no hay suficiente
     nA = Math.min(nA, BANK_A.length);
     nB = Math.min(nB, BANK_B.length);
 
-    // si falta de uno, rellena con el otro
     let total = nA + nB;
     if(total < n){
       const missing = n - total;
@@ -545,6 +541,7 @@
       const addA = Math.min(missing, Math.max(0, canA));
       nA += addA;
       total += addA;
+
       const missing2 = n - total;
       const canB = BANK_B.length - nB;
       const addB = Math.min(missing2, Math.max(0, canB));
@@ -553,10 +550,9 @@
 
     const A = shuffle(BANK_A.slice()).slice(0, nA);
     const B = shuffle(BANK_B.slice()).slice(0, nB);
-
     const picked = shuffle(A.concat(B));
 
-    // baraja opciones para disimular “la correcta es la más larga”
+    // baraja opciones y recalcula índice de correcta
     session = picked.map(item=>{
       const opts = item.options.map((txt, i)=>({txt, i}));
       shuffle(opts);
@@ -594,7 +590,6 @@
     setupNoteEl.textContent = "Cargando bancos…";
 
     try{
-      // Carga bancos desde tus ficheros
       const [b1,b2,b3,b4,b5,b6] = await Promise.all([
         loadBankFromFile("test_tema1_ipo.html"),
         loadBankFromFile("test_tema2_ipo.html"),
@@ -604,20 +599,16 @@
         loadBankFromFile("test_tema6_ipo.html"),
       ]);
 
-      // “Banco de importancia”: 40 de (1-3) y 20 de (4-6)
-      // Reparto aproximado:
-      // 40 = 15(T1) + 15(T2) + 10(T3)
-      // 20 =  7(T4) +  7(T5) +  6(T6)
-      const top1 = pickTop(b1, 15).map(x=>({...x, topic: x.topic || "Tema 1"}));
-      const top2 = pickTop(b2, 15).map(x=>({...x, topic: x.topic || "Tema 2"}));
-      const top3 = pickTop(b3, 10).map(x=>({...x, topic: x.topic || "Tema 3"}));
+      // ✅ TODO el banco por grupos
+      BANK_A = []
+        .concat(b1.map(x=>({...x, topic: x.topic || "Tema 1"})))
+        .concat(b2.map(x=>({...x, topic: x.topic || "Tema 2"})))
+        .concat(b3.map(x=>({...x, topic: x.topic || "Tema 3"})));
 
-      const top4 = pickTop(b4, 7).map(x=>({...x, topic: x.topic || "Tema 4"}));
-      const top5 = pickTop(b5, 7).map(x=>({...x, topic: x.topic || "Tema 5"}));
-      const top6 = pickTop(b6, 6).map(x=>({...x, topic: x.topic || "Tema 6"}));
-
-      BANK_A = top1.concat(top2).concat(top3);
-      BANK_B = top4.concat(top5).concat(top6);
+      BANK_B = []
+        .concat(b4.map(x=>({...x, topic: x.topic || "Tema 4"})))
+        .concat(b5.map(x=>({...x, topic: x.topic || "Tema 5"})))
+        .concat(b6.map(x=>({...x, topic: x.topic || "Tema 6"})));
 
       LOADED = true;
       btnStart.disabled = false;
