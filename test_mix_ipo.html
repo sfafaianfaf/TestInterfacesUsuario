@@ -115,8 +115,7 @@
     <div>
       <h1>Test MIX · IPO</h1>
       <div class="sub">
-        Genera un test aleatorio mezclando temas:
-        <b>≈66%</b> de (Tema 1–3) y <b>≈34%</b> de (Tema 4–6).<br/>
+        Banco “TOP 60” curado (sin cargar otros archivos). Mezcla: <b>≈66%</b> (Tema 1–3) + <b>≈34%</b> (Tema 4–6).<br/>
         Puntuación: +1 correcta · −1/3 incorrecta · 0 en blanco.
       </div>
     </div>
@@ -132,10 +131,7 @@
       <div class="row">
         <div>
           <div style="font-size:16px; font-weight:900;">Configura tu test MIX</div>
-          <div class="small">
-            Esto carga automáticamente los bancos desde tus HTML de temas.
-            Si algo da 404, revisa nombres exactos (mayúsculas/minúsculas).
-          </div>
+          <div class="small" id="setupNote"></div>
         </div>
       </div>
 
@@ -145,7 +141,7 @@
         <div>
           <div class="small" style="margin:0 0 6px;">Número de preguntas (N)</div>
           <input type="number" id="numQuestions" min="10" max="60" value="30" />
-          <div class="small">Máximo recomendado aquí: 60.</div>
+          <div class="small">Máximo: 60 (banco TOP 60).</div>
         </div>
 
         <div>
@@ -157,13 +153,10 @@
         </div>
 
         <div class="actions" style="margin-top:0;">
-          <button class="primary" id="btnLoad">Cargar bancos</button>
-          <button class="primary" id="btnStart" disabled>Empezar</button>
+          <button class="primary" id="btnStart">Empezar</button>
           <button class="danger" id="btnHardReset">Reset</button>
         </div>
       </div>
-
-      <div class="small" id="setupNote"></div>
     </div>
 
     <!-- QUIZ -->
@@ -221,6 +214,10 @@
 </div>
 
 <script>
+  // ====== TOP 60 (40 de T1-3, 20 de T4-6) ======
+  const BANK_A = [{"topic":"Ergonomía","q":"Objetivo de la ergonomía según el tema:","options":["Maximizar seguridad, eficiencia y fiabilidad; simplificar tareas e incrementar confort y satisfacción.","Maximizar complejidad para retar al usuario.","Reducir la satisfacción del usuario.","Eliminar el uso del color."],"a":0,"exp":"Frase literal del tema."},{"topic":"Ergonomía","q":"La ergonomía estudia:","options":["Características físicas de la interacción (entorno físico).","Sólo procesos mentales.","Sólo diseño de logotipos.","Sólo protocolos web."],"a":0,"exp":"Ergonomía: características físicas de la interacción."},{"topic":"Atención · Definición","q":"La atención se define como:","options":["Proceso de concentración mental sobre un conjunto de estímulos (o pensamientos).","Capacidad ilimitada de retención sensorial.","Un tipo de percepción exclusivamente visual.","Un protocolo de interacción."],"a":0,"exp":"Definición textual en la diapositiva de atención."},{"topic":"Disciplinas","q":"¿Cuál de estas aparece como disciplina relacionada con IPO en el tema?","options":["Astrología","Ergonomía","Geología","Botánica"],"a":1,"exp":"Mapa de disciplinas: Psicología, Diseño, Sociología, Ergonomía, Programación, Ing. Software, IA."},{"topic":"IPO · Definición","q":"Según ACM SIGCHI (1992), la IPO es la disciplina relacionada con:","options":["El análisis financiero de sistemas informáticos.","El diseño, implementación y evaluación de sistemas informáticos interactivos para uso de seres humanos y el estudio de fenómenos relacionados.","La programación de sistemas operativos para servidores.","La creación de hardware para redes."],"a":1,"exp":"Definición de la diapositiva de “Definiciones” (ACM SIGCHI, 1992)."},{"topic":"IPO · Terminología","q":"En inglés, Interacción Persona-Ordenador se denomina:","options":["HCI/CHI","HTTP/HTML","UX/UI","API/SDK"],"a":0,"exp":"Human-Computer Interaction (HCI/CHI)."},{"topic":"Psicología","q":"La contribución de la psicología a la IPO incluye:","options":["Sólo medir temperatura del hardware.","Teorías sobre comportamiento y procesamiento de información + metodologías para evaluar satisfacción con el diseño.","Sólo diseño de servidores.","Sólo clasificación tipográfica."],"a":1,"exp":"Se indica explícitamente en “Psicología”."},{"topic":"Objetivos IPO","q":"Un objetivo de la IPO es desarrollar o mejorar:","options":["Seguridad, utilidad, efectividad, eficiencia y usabilidad.","Sólo la estética visual.","Únicamente la velocidad del procesador.","Exclusivamente la seguridad física del edificio."],"a":0,"exp":"Lista explícita en “Objetivos”."},{"topic":"Percepción","q":"Las percepciones más importantes para IPO son:","options":["Visual, acústica y háptica.","Gusto, olfato y equilibrio.","Sólo visual.","Sólo auditiva."],"a":0,"exp":"Se enumeran visual (ojo), acústica (oído), háptica (tacto)."},{"topic":"Atención selectiva","q":"Prestamos atención selectivamente porque:","options":["Tenemos capacidad limitada; sin selección podríamos ser desbordados (overloaded).","Tenemos capacidad infinita.","Los estímulos no influyen.","La memoria sensorial es permanente."],"a":0,"exp":"Se indica limitación y riesgo de overload."},{"topic":"Tacto","q":"El tacto es importante especialmente en:","options":["Sistemas de Realidad Virtual y para personas con discapacidad visual o auditiva.","SEO de páginas web.","Compresión de imágenes.","Diseño de protocolos."],"a":0,"exp":"Diapositiva del tacto."},{"topic":"Interfaz · CHI","q":"Según CHI, una interfaz incluye:","options":["Lenguaje de entrada para el usuario, lenguaje de salida para el ordenador y un protocolo de interacción.","Sólo lenguaje de salida.","Sólo lenguaje de entrada.","Sólo un conjunto de iconos."],"a":0,"exp":"Definición en la diapositiva final de interfaz."},{"topic":"Color · Periferia","q":"Se recomienda usar blanco para:","options":["Información periférica.","Texto principal siempre.","Avisos de error únicamente.","Sombras de iconos."],"a":0,"exp":"Recomendación explícita."},{"topic":"Interfaz · Moran","q":"Según Moran, la interfaz son:","options":["Los aspectos del sistema con los que el usuario entra en contacto.","Sólo los aspectos físicos del teclado.","Sólo la estética del diseño.","Sólo el sistema operativo."],"a":0,"exp":"Definición atribuida a Moran."},{"topic":"Tema 2","q":"¿Cuál NO aparece como bloque de ‘Dispositivos de interacción’ en el esquema del tema?","options":["Teclado","Apuntadores","Pantallas","Lenguaje natural"],"a":3,"exp":"El esquema de dispositivos incluye teclado, apuntadores, pantallas, rastreo ocular y otros dispositivos."},{"topic":"Tema 2","q":"Otro criterio de evaluación de metáforas que cita el tema es…","options":["representatividad: fácil de representar (visual/auditivo/palabras).","que sea siempre silenciosa y sin texto.","que solo use iconos sin verbos.","que elimine carpetas dentro de carpetas."],"a":0,"exp":"Metáfora ideal: representable visual, auditiva o verbalmente."},{"topic":"Tema 2","q":"¿Cuál está en la lista de estilos de interacción del tema?","options":["Interfaz por línea de órdenes.","HMD con CRT pequeño.","Posicionadores ultrasónicos.","Guante con fibra óptica."],"a":0,"exp":"Se enumeran estilos como línea de órdenes, menús, etc."},{"topic":"Tema 2","q":"En ‘Identificación de problemas del usuario’ se incluye…","options":["examinar tareas, analizar dificultades y observar uso con prototipo.","aplicar triangulación electromagnética para posicionadores.","definir HMD de LED de columna única.","seleccionar QWERTY como estándar."],"a":0,"exp":"Examinar tareas/dificultades y observar con prototipo."},{"topic":"Tema 2","q":"Estilo de interacción (Preece, 1994) se entiende como…","options":["término genérico de maneras en que usuarios se comunican con el ordenador.","un tipo de teclado alternativo a QWERTY.","un dispositivo de salida para resultados.","un paradigma exclusivo de realidad virtual."],"a":0,"exp":"Definición general de estilos de interacción."},{"topic":"Tema 2","q":"En ‘Evaluación de la metáfora’, un punto a revisar es…","options":["aplicabilidad/estructura y si crea falsas expectativas.","si el teclado es AZERTY o QWERTZ.","si la pantalla es CRT o LCD.","si el ratón supera 2000dpi."],"a":0,"exp":"Se evalúa aplicabilidad y falsas expectativas."},{"topic":"Tema 2","q":"Fases del diseño de metáforas (orden lógico del tema):","options":["Definición funcional → Identificación de problemas → Generación → Evaluación.","Generación → Evaluación → Definición funcional → Identificación.","Evaluación → Generación → Identificación → Definición funcional.","Identificación → Definición funcional → Evaluación → Generación."],"a":0,"exp":"Es el orden mostrado en el esquema."},{"topic":"Tema 2","q":"Interacción por gestos: ejemplos mencionados incluyen…","options":["gesture pendant y Wiimote.","trackball y TypeMatrix.","HMD y gafas LCD resplandecientes.","teclado HCESAR y QWERTZ."],"a":0,"exp":"Gesture pendant y Wiimote."},{"topic":"Tema 2","q":"Las variantes por ergonomía citadas incluyen…","options":["L-Type y TypeMatrix.","QWERTY y AZERTY.","HCESAR y QWERTZ.","DVORAK y QWERTY."],"a":0,"exp":"El tema muestra ejemplos ergonómicos como L-Type y TypeMatrix."},{"topic":"Tema 2","q":"En ratones ópticos, el tema distingue sensores por DPI: óptico y láser. ¿Cuál es la idea general?","options":["Óptico típico por debajo de ~800dpi y láser por encima (≈800–2000dpi).","Óptico por encima de 2000dpi y láser por debajo.","Ambos siempre iguales; DPI no aplica.","El láser solo se usa en trackballs."],"a":0,"exp":"Se compara óptico (<800dpi) frente a láser (>800dpi–2000dpi)."},{"topic":"Tema 2","q":"La metáfora del escritorio introducida por Xerox (y asociada a Macintosh) supuso…","options":["un cambio fuerte en la usabilidad al hacer la interacción más accesible.","el fin de las interfaces visuales y vuelta a línea de comandos.","una sustitución total de iconos por lenguaje natural.","un paradigma exclusivo para realidad aumentada."],"a":0,"exp":"Impacto importante en usabilidad."},{"topic":"Tema 2","q":"¿Cómo se captura el movimiento en un ratón mecánico estándar (resumen correcto)?","options":["La bola mueve rodillos; discos perforados interrumpen luz; sensores generan señales de velocidad.","Un láser mide la textura; la CPU integra desplazamiento; se envía por Bluetooth.","Un giroscopio detecta orientación; se triangula con una cámara externa.","Un touchpad interno traduce presión en coordenadas absolutas."],"a":0,"exp":"Bola→rodillos→discos de codificación→LED→sensores→señales."},{"topic":"Tema 2","q":"¿Qué conjunto son variantes esquemáticas por idioma mencionadas en el tema?","options":["QWERTY, AZERTY, QWERTZ, HCESAR y DVORAK.","QWERTY, Dvorak, Colemak, Workman y Neo.","AZERTY, QWERTY, Maltron, TypeMatrix y L-Type.","QWERTZ, DVORAK, L-Type, Trackball y Touchpad."],"a":0,"exp":"En las diapositivas se listan esas cinco variantes."},{"topic":"Tema 3","q":"¿Qué autor se asocia a ‘dejar el control a los usuarios’ en los principios citados?","options":["Simpson (1985).","Preece (1994).","IBM (2001).","W3C (WAI)."],"a":0,"exp":"Aparece en la lista de autores de principios."},{"topic":"Tema 3","q":"Sobre diseño para web frente a interfaces tradicionales, el tema resume que…","options":["hay principios aplicables, pero la web tiene particularidades propias.","no hay ningún principio reutilizable, todo cambia.","la web exige siempre CMYK y no RGB.","la web solo puede usar texto, nunca iconos."],"a":0,"exp":"Se indica que hay solapamiento, pero la web introduce diferencias."},{"topic":"Tema 3","q":"Sobre guías web, el tema menciona como recursos de referencia…","options":["usability.gov y manuales reconocidos (p.ej., Yale).","solo Microsoft Word y Finder.","únicamente ISO/IEC 9126 para color.","solo páginas internas privadas sin acceso."],"a":0,"exp":"Se citan enlaces como usability.gov y manual de Yale como referencia."},{"topic":"Tema 3","q":"Una razón por la que los principios ayudan al diseño es que…","options":["permiten consistencia dentro de un sistema o familia de productos.","garantizan que no habrá errores de usuario nunca.","obligan al usuario a aprender comandos de memoria.","eliminan la necesidad de terminología común."],"a":0,"exp":"Se remarca la consistencia como ventaja."},{"topic":"Tema 3","q":"Diferencia clave: un ‘principio’ frente a una ‘directriz’ (regla) es que el principio…","options":["es un objetivo general y la directriz concreta cómo aplicarlo.","es un ejemplo gráfico y la directriz es un estándar legal.","es siempre obligatorio y la directriz siempre opcional.","solo aplica a color y la directriz solo a tipografía."],"a":0,"exp":"Principios organizan objetivos; directrices bajan a nivel de regla aplicable."},{"topic":"Tema 3","q":"Una recomendación de usabilidad del tema es usar color en mensajes: por ejemplo…","options":["rojo para alertar de un error y amarillo para avisos.","azul para errores y negro para éxito.","verde para errores y rojo para confirmaciones.","morado para todo porque es neutro."],"a":0,"exp":"Se muestra codificación típica en mensajes."},{"topic":"Tema 3","q":"¿Cuál es un ejemplo de guía de estilo ‘de plataforma’ citado en el tema?","options":["Motif (OSF) o CDE para UNIX, entre otros.","WCAG como guía de teclado.","CMYK como guía de interacción.","RGB como guía corporativa de producto."],"a":0,"exp":"Motif/CDE aparecen como estilos/plataformas."},{"topic":"Tema 3","q":"Beneficios típicos de estándares/guías de estilo citados incluyen…","options":["terminología común, mantenimiento/evolución y reducción de formación.","obligar a memorizar comandos para ser más rápido.","más complejidad para que el usuario ‘aprenda’.","eliminar identidad común del producto."],"a":0,"exp":"Aparecen como lista de beneficios."},{"topic":"Tema 3","q":"En el tema, ¿qué se busca con estándares y guías de estilo en IPO?","options":["Asegurar una base común de diseño y consistencia de interfaces.","Sustituir por completo las pruebas con usuarios.","Eliminar la necesidad de diseño visual en la interfaz.","Convertir cualquier interfaz en usable automáticamente."],"a":0,"exp":"Se presentan como base para diseño consistente; no garantizan por sí solas usabilidad."},{"topic":"Tema 3","q":"El objetivo del diseño gráfico de interfaz, según el tema, es…","options":["crear una interfaz ‘transparente’ que no obstruya el acceso.","hacer la interfaz llamativa aunque tape la tarea.","maximizar adornos por encima de la función.","ocultar información crítica para simplificar."],"a":0,"exp":"Interfaz transparente y buena experiencia."},{"topic":"Tema 3","q":"En guías de estilo, una distinción habitual del tema es…","options":["guías comerciales vs guías corporativas.","guías de teclado vs guías de ratón.","guías legales vs guías secretas.","guías de RV vs guías de olfato."],"a":0,"exp":"Se mencionan tipos: comerciales y corporativas."},{"topic":"Tema 3","q":"Una afirmación coherente con el tema es que las guías…","options":["proporcionan base, pero no garantizan por sí solas usabilidad.","eliminan la necesidad de evaluación con usuarios.","hacen innecesario el conocimiento del entorno.","funcionan igual sin importar plataforma o contexto."],"a":0,"exp":"Se insiste: base sí, garantía total no."},{"topic":"Tema 3","q":"Los principios de IBM (2001) incluyen (según el tema)…","options":["satisfacción y disponibilidad, entre otros.","solo velocidad de CPU y memoria.","únicamente accesibilidad web WCAG.","exclusivamente ‘hacer todo azul’."],"a":0,"exp":"En diapositivas se listan como principios aún vigentes."}];
+  const BANK_B = [{"topic":"Tema 4","q":"¿Qué afirmación es una ventaja de internacionalizar desde el principio?","options":["añadir soporte internacional al final puede ser menos estable que hacerlo durante el desarrollo.","es mejor traducir al final porque siempre es más estable.","la internacionalización solo afecta a iconos, no al texto.","se evita por completo el mantenimiento de recursos."],"a":0,"exp":"Se indica que añadir soporte al final puede hacerlo menos estable."},{"topic":"Tema 4","q":"Modelo ‘Producto localizado’ (según el tema):","options":["Recursos localizados + Código de la aplicación = Producto localizado.","Código único + traducción en comentarios = producto localizado.","Iconos locales + colores locales = producto localizado.","Solo cambiar tipografía = producto localizado."],"a":0,"exp":"Esquema presentado."},{"topic":"Tema 4","q":"Internacionalización (i18n) es el proceso de…","options":["diseñar una aplicación para adaptarla a lenguajes/regiones sin cambiar el código.","traducir directamente la interfaz dentro del código fuente.","crear dos ejecutables diferentes por cada idioma.","sustituir iconos por texto para evitar problemas culturales."],"a":0,"exp":"i18n: adaptar sin cambiar código (texto fuera, recursos)."},{"topic":"Tema 4","q":"Clave de diseño para localizar: primero…","options":["extraer textos/datos/gráficos a ficheros separados.","meter todo el texto dentro del código para controlarlo.","traducir primero y luego separar recursos.","forzar un único idioma interno."],"a":0,"exp":"Tema: extraer recursos a fichero separado."},{"topic":"Tema 4","q":"Localización (l10n) es el proceso de…","options":["adaptar software a una región o idioma añadiendo componentes específicos y traduciendo texto.","diseñar la aplicación para que no requiera cambios culturales.","eliminar formatos de fecha/hora para simplificar.","convertir todo a ASCII para compatibilidad."],"a":0,"exp":"l10n: adaptar a región concreta traduciendo y añadiendo componentes locales."},{"topic":"Tema 4","q":"Elementos de interfaz a considerar en internacionalización (NO es uno típico):","options":["unidades de medida.","colores.","calendarios/formatos de fecha y hora.","compilador y optimizaciones de CPU."],"a":3,"exp":"Se listan cultura, iconos, colores, fechas/horas, números/moneda, ordenación, unidades, escritura."},{"topic":"Tema 4","q":"Un programa internacionalizado NO debería tener en el código…","options":["elementos dependientes de lengua o contexto cultural.","lógica de negocio y estructuras de control.","módulos de acceso a datos y red.","funciones reutilizables y librerías comunes."],"a":0,"exp":"Los elementos dependientes de lengua/cultura deben estar fuera del código."},{"topic":"Tema 5","q":"Entre los “errores más comunes en el diseño” se incluyen categorías como…","options":["Windows, Layouts, Texto, Controles, Teclado y Mouse.","Cámaras, GPS, Acelerómetros y Giroscopios.","HTML, CSS, JavaScript y SQL.","Voz, gestos, háptica y aromas."],"a":0,"exp":"Listado de categorías en la diapositiva de errores."},{"topic":"Tema 5","q":"Entre los principios de diseño Windows del tema aparece…","options":["cuidar el look and feel.","usar siempre texto azul aunque no sea enlace.","ocultar la desinstalación para no molestar.","centrarse en características, no experiencias."],"a":0,"exp":"Se lista “Cuidar el look and feel”."},{"topic":"Tema 5","q":"En Layouts, una recomendación es evitar truncamiento de texto con máximo…","options":["65 caracteres de ancho.","30 caracteres de ancho.","80 caracteres de ancho.","120 caracteres de ancho."],"a":0,"exp":"Se indica “máximo 65 caracteres de ancho”."},{"topic":"Tema 5","q":"En terminología centrada en el usuario, ‘Cursor’ equivale a…","options":["Puntero.","Reiniciar.","Texto.","Click."],"a":0,"exp":"Tabla de equivalencias del tema."},{"topic":"Tema 5","q":"En mensajes de error, se recomienda evitar palabras como…","options":["‘Error’, ‘fallo’, ‘ilegal’, ‘inválido’, ‘abortar’.","‘ayuda’, ‘consejo’, ‘sugerencia’.","‘sí’, ‘no’, ‘quizá’.","‘guardar’, ‘abrir’, ‘cerrar’."],"a":0,"exp":"Listado de términos a evitar."},{"topic":"Tema 5","q":"Las advertencias de error se definen como mensajes que…","options":["advierten de un posible error futuro.","informan de un error ya ocurrido y bloquean siempre.","sirven solo para felicitar al usuario.","se usan únicamente al cerrar la aplicación."],"a":0,"exp":"Definición del tema."},{"topic":"Tema 5","q":"Otro principio citado: “Diseñar experiencias, no…”","options":["características.","menús.","ventanas.","atajos."],"a":0,"exp":"Se menciona tal cual."},{"topic":"CSS","q":"Una ventaja para el usuario de diseñar con CSS es:","options":["Páginas más livianas y mejor accesibilidad/usabilidad.","Obligar a IE 800x600.","Eliminar la necesidad de texto.","Hacer que el site dependa de un plugin."],"a":0,"exp":"Ventajas para usuario: livianas, accesibilidad, usabilidad, estilos impresión/móviles."},{"topic":"UX · Garrett","q":"En el modelo de Garrett, el “esqueleto” incluye:","options":["Diseño de interacción y arquitectura de la información","Necesidades del usuario","Especificaciones funcionales","Diseño visual"],"a":0,"exp":"Esqueleto: diseño de interacción + arquitectura de información (y navegación/interfaz según detalle)."},{"topic":"Diseño web","q":"“Implementación” en diseño incluye:","options":["Captar info del usuario y ya.","Crear el diseño con la info captada, prototipar y no quedar atrapado por una tecnología concreta.","Sólo escribir el HTML final sin pruebas.","Usar siempre Flash."],"a":1,"exp":"Implementación: crear diseño, prototipado, evitar dependencia tecnológica."},{"topic":"UX · Garrett","q":"En el modelo de J.J. Garret, la base (estrategia) incluye:","options":["Diseño visual","Necesidades del usuario y objetivos del sitio","Diseño de información","Diseño de navegación"],"a":1,"exp":"Estrategia: necesidades del usuario + objetivos del sitio."},{"topic":"Tablas vs CSS","q":"¿Por qué no es buena idea maquetar con tablas?","options":["Porque HTML prohíbe tablas.","Porque afecta semántica/accesibilidad; la maquetación debe hacerse con CSS.","Porque no funciona en móvil jamás.","Porque aumenta siempre el tamaño del texto."],"a":1,"exp":"Tablas para datos; maquetación con CSS."},{"topic":"Web dinámica","q":"Una opción de web dinámica en el cliente, según el tema, es:","options":["CGI","JavaScript","Servlets","ASP en servidor"],"a":1,"exp":"HTML dinámico + JavaScript (cliente)."}];
+
   // --- Anti “doble salto” (móvil)
   function onTap(el, fn){
     let lock = 0;
@@ -244,74 +241,7 @@
     return arr;
   }
 
-  // ---- Cargar BANK desde un HTML (busca: const BANK = [ ... ])
-  function extractBankArrayLiteral(html){
-    // ✅ FIX: aquí NO van dobles backslashes
-    const m = html.match(/const\s+BANK\s*=\s*\[/);
-    if(!m) return null;
-
-    // desde el primer '[' que aparece después del match
-    const start = html.indexOf("[", m.index);
-    if(start < 0) return null;
-
-    let i = start;
-    let depth = 0;
-    let str = null;
-    let esc = false;
-
-    while(i < html.length){
-      const ch = html[i];
-
-      if(str){
-        if(esc){ esc = false; }
-        else if(ch === "\\"){ esc = true; }
-        else if(ch === str){ str = null; }
-      }else{
-        if(ch === "'" || ch === '"' || ch === "`"){ str = ch; }
-        else if(ch === "["){ depth++; }
-        else if(ch === "]"){
-          depth--;
-          if(depth === 0){
-            return html.slice(start, i+1);
-          }
-        }
-      }
-      i++;
-    }
-    return null;
-  }
-
-  async function loadBankFromFile(file){
-    const res = await fetch(file, {cache:"no-store"});
-    if(!res.ok) throw new Error(`No se pudo cargar ${file} (${res.status})`);
-    const txt = await res.text();
-    const arr = extractBankArrayLiteral(txt);
-    if(!arr) throw new Error(`No encontré "const BANK = [...]" en ${file}`);
-
-    // Convierte "[{...}]" a array real (los objetos son literales JS)
-    const raw = Function("return " + arr)();
-
-    // Normaliza: {topic, q, options, a, exp}
-    return raw.map(item=>{
-      const topic = item.topic ?? item.tema ?? item.t ?? "";
-      const q = item.q ?? item.p ?? item.question ?? item.enunciado ?? "";
-      const options = item.options ?? item.opts ?? item.opciones ?? [];
-      const a =
-        (typeof item.a === "number") ? item.a :
-        (typeof item.correct === "number") ? item.correct :
-        (typeof item.c === "number") ? item.c :
-        0;
-      const exp = item.exp ?? item.e ?? item.explain ?? "";
-      return { topic, q, options, a, exp };
-    }).filter(x => x.q && Array.isArray(x.options) && x.options.length >= 4);
-  }
-
-  // ---- Estado del MIX
-  let BANK_A = []; // temas 1-3 (66%)
-  let BANK_B = []; // temas 4-6 (34%)
-  let LOADED = false;
-
-  // ---- Estado de sesión
+  // ---- Estado
   let session = [];
   let idx = 0;
   let answers = [];
@@ -348,7 +278,6 @@
   const finalBlankEl = document.getElementById("finalBlank");
   const reviewListEl = document.getElementById("reviewList");
 
-  const btnLoad = document.getElementById("btnLoad");
   const btnStart = document.getElementById("btnStart");
   const btnHardReset = document.getElementById("btnHardReset");
 
@@ -363,7 +292,9 @@
   const btnBackToSetup = document.getElementById("btnBackToSetup");
 
   function escapeHtml(s){
-    return String(s).replace(/[&<>"']/g, (c)=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+    return String(s).replace(/[&<>"']/g, (c)=>({
+      "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+    }[c]));
   }
 
   function resetAll(){
@@ -379,7 +310,7 @@
     qNum.textContent = "0";
     qTotal.textContent = "0";
     scoreNow.textContent = "0.00";
-    setupNoteEl.textContent = LOADED ? "Bancos cargados. Dale a Empezar." : "Pulsa “Cargar bancos”.";
+    setupNoteEl.textContent = `Bancos: ${BANK_A.length} (T1-3) + ${BANK_B.length} (T4-6) = ${BANK_A.length + BANK_B.length}.`;
   }
 
   function compute(){
@@ -413,7 +344,6 @@
   function render(){
     const item = session[idx];
     topicTagEl.textContent = item.topic || "MIX";
-
     questionTextEl.textContent = item.q;
 
     optionsEl.innerHTML = "";
@@ -430,7 +360,7 @@
     });
 
     if(answers[idx].sel !== null){
-      const r = optionsEl.querySelector(\`input[value="\${answers[idx].sel}"]\`);
+      const r = optionsEl.querySelector(`input[value="${answers[idx].sel}"]`);
       if(r) r.checked = true;
     }
 
@@ -455,11 +385,8 @@
     const item = session[idx];
     const a = answers[idx];
 
-    if(forceBlank){
-      a.sel = null;
-    }else{
-      saveSelection();
-    }
+    if(forceBlank) a.sel = null;
+    else saveSelection();
 
     a.graded = true;
     a.isBlank = (a.sel === null);
@@ -523,7 +450,6 @@
     });
   }
 
-  // --- Construye MIX 66/34 usando TODO el banco (T1-3) vs (T4-6)
   function buildSession(N){
     const n = Math.max(10, Math.min(60, parseInt(N,10) || 30));
     mode = modeSelectEl.value;
@@ -552,7 +478,7 @@
     const B = shuffle(BANK_B.slice()).slice(0, nB);
     const picked = shuffle(A.concat(B));
 
-    // baraja opciones y recalcula índice de correcta
+    // Baraja opciones y recalcula correcta
     session = picked.map(item=>{
       const opts = item.options.map((txt, i)=>({txt, i}));
       shuffle(opts);
@@ -585,50 +511,8 @@
   onTap(btnExpandAll, ()=> document.querySelectorAll("details.reviewItem").forEach(d=>d.open=true));
   onTap(btnCollapseAll, ()=> document.querySelectorAll("details.reviewItem").forEach(d=>d.open=false));
   onTap(btnBackToSetup, ()=> resetAll());
+  onTap(btnStart, ()=> buildSession(numQuestionsEl.value));
 
-  onTap(btnLoad, async ()=>{
-    setupNoteEl.textContent = "Cargando bancos…";
-
-    try{
-      const [b1,b2,b3,b4,b5,b6] = await Promise.all([
-        loadBankFromFile("test_tema1_ipo.html"),
-        loadBankFromFile("test_tema2_ipo.html"),
-        loadBankFromFile("test_tema3_ipo.html"),
-        loadBankFromFile("test_tema4_ipo.html"),
-        loadBankFromFile("test_tema5_ipo.html"),
-        loadBankFromFile("test_tema6_ipo.html"),
-      ]);
-
-      // ✅ TODO el banco por grupos
-      BANK_A = []
-        .concat(b1.map(x=>({...x, topic: x.topic || "Tema 1"})))
-        .concat(b2.map(x=>({...x, topic: x.topic || "Tema 2"})))
-        .concat(b3.map(x=>({...x, topic: x.topic || "Tema 3"})));
-
-      BANK_B = []
-        .concat(b4.map(x=>({...x, topic: x.topic || "Tema 4"})))
-        .concat(b5.map(x=>({...x, topic: x.topic || "Tema 5"})))
-        .concat(b6.map(x=>({...x, topic: x.topic || "Tema 6"})));
-
-      LOADED = true;
-      btnStart.disabled = false;
-      setupNoteEl.textContent = `OK: cargado. Banco MIX = ${BANK_A.length} (T1-3) + ${BANK_B.length} (T4-6). Ya puedes empezar.`;
-    }catch(err){
-      LOADED = false;
-      btnStart.disabled = true;
-      setupNoteEl.textContent = "ERROR: " + err.message;
-    }
-  });
-
-  onTap(btnStart, ()=>{
-    if(!LOADED){
-      setupNoteEl.textContent = "Primero pulsa “Cargar bancos”.";
-      return;
-    }
-    buildSession(numQuestionsEl.value);
-  });
-
-  // init
   resetAll();
 </script>
 </body>
