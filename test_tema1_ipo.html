@@ -1,0 +1,850 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tema 1 · Introducción IPO — Banco 50</title>
+  <style>
+    :root{
+      --bg:#0b1220; --card:#121a2b; --muted:#9aa4b2; --text:#e7eefc;
+      --accent:#6ea8fe; --ok:#22c55e; --bad:#ef4444; --warn:#f59e0b; --border:#24304a;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      background: radial-gradient(1200px 600px at 20% 0%, #132044 0%, var(--bg) 60%);
+      color:var(--text); line-height:1.35;
+    }
+    .wrap{max-width:980px; margin:0 auto; padding:24px 16px 48px;}
+    header{display:flex; justify-content:space-between; gap:12px; align-items:flex-end; flex-wrap:wrap; margin-bottom:14px;}
+    h1{font-size:20px; margin:0; letter-spacing:.2px;}
+    .sub{color:var(--muted); font-size:13px; margin-top:6px;}
+    .pill{
+      display:inline-flex; gap:10px; align-items:center;
+      padding:8px 12px; border:1px solid var(--border);
+      border-radius:999px; background: rgba(18,26,43,.7);
+      color:var(--muted); font-size:13px;
+    }
+    .card{
+      border:1px solid var(--border);
+      background: linear-gradient(180deg, rgba(18,26,43,.92), rgba(18,26,43,.7));
+      border-radius:16px; padding:18px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.25);
+    }
+    .row{display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;}
+    .progress{width:100%; height:10px; border-radius:999px; background:#0e1628; border:1px solid var(--border); overflow:hidden; margin-top:10px;}
+    .bar{height:100%; width:0%; background: linear-gradient(90deg, var(--accent), #8b5cf6); border-radius:999px; transition: width .25s ease;}
+    .q{font-size:18px; margin:14px 0 10px;}
+    .topic{color:var(--muted); font-size:13px;}
+    .opts{display:grid; gap:10px; margin-top:8px;}
+    label.opt{
+      display:flex; gap:10px; align-items:flex-start;
+      padding:12px; border-radius:12px;
+      border:1px solid var(--border); background: rgba(11,18,32,.45);
+      cursor:pointer;
+      transition: transform .06s ease, border-color .15s ease, background .15s ease;
+    }
+    label.opt:hover{transform: translateY(-1px); border-color: rgba(110,168,254,.55); background: rgba(110,168,254,.08);}
+    input[type="radio"]{margin-top:3px; accent-color: var(--accent); transform: scale(1.05);}
+    .actions{display:flex; gap:10px; flex-wrap:wrap; margin-top:14px;}
+    button{
+      border:1px solid var(--border); background: rgba(11,18,32,.55);
+      color:var(--text); padding:10px 12px; border-radius:12px;
+      cursor:pointer; font-weight:700; letter-spacing:.2px;
+      transition: background .15s ease, transform .06s ease, border-color .15s ease;
+    }
+    button:hover{transform: translateY(-1px); border-color: rgba(110,168,254,.55); background: rgba(110,168,254,.10);}
+    button.primary{border-color: rgba(110,168,254,.7); background: rgba(110,168,254,.16);}
+    button.danger{border-color: rgba(239,68,68,.65); background: rgba(239,68,68,.10);}
+    button.ok{border-color: rgba(34,197,94,.65); background: rgba(34,197,94,.10);}
+    button:disabled{opacity:.45; cursor:not-allowed; transform:none;}
+    .feedback{
+      margin-top:12px; padding:12px; border-radius:12px;
+      border:1px solid var(--border); background: rgba(11,18,32,.45);
+      display:none;
+    }
+    .feedback.ok{border-color: rgba(34,197,94,.55); background: rgba(34,197,94,.10)}
+    .feedback.bad{border-color: rgba(239,68,68,.55); background: rgba(239,68,68,.10)}
+    .feedback.warn{border-color: rgba(245,158,11,.55); background: rgba(245,158,11,.10)}
+    .small{color:var(--muted); font-size:13px; margin-top:8px;}
+    .setup{display:block;}
+    .quiz{display:none;}
+    .summary{display:none; margin-top:14px;}
+    .grid{display:grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap:10px; margin-top:12px;}
+    .kpi{padding:12px; border-radius:14px; border:1px solid var(--border); background: rgba(11,18,32,.45);}
+    .kpi .n{font-size:22px; font-weight:900; margin-bottom:4px}
+    .kpi .t{color:var(--muted); font-size:13px}
+    @media (max-width:740px){ .grid{grid-template-columns: repeat(2, minmax(0,1fr));} }
+    .review{margin-top:14px;}
+    details.reviewItem{
+      border:1px solid var(--border); border-radius:14px; background: rgba(11,18,32,.35);
+      padding:10px 12px; margin:10px 0;
+    }
+    details.reviewItem summary{cursor:pointer; font-weight:800;}
+    .tag{display:inline-block; padding:2px 8px; border:1px solid var(--border); border-radius:999px; color:var(--muted); font-size:12px; margin-left:8px;}
+    .ansLine{margin-top:8px; color:var(--muted);}
+    .ansLine b{color:var(--text);}
+    .correct{color: var(--ok); font-weight:800;}
+    .incorrect{color: var(--bad); font-weight:800;}
+    .blank{color: var(--warn); font-weight:800;}
+    .divider{height:1px; background: rgba(36,48,74,.8); margin:12px 0;}
+    input[type="number"]{
+      width:120px; padding:10px 12px; border-radius:12px; border:1px solid var(--border);
+      background: rgba(11,18,32,.55); color: var(--text); font-weight:800;
+      outline:none;
+    }
+    select{
+      padding:10px 12px; border-radius:12px; border:1px solid var(--border);
+      background: rgba(11,18,32,.55); color: var(--text); font-weight:700;
+      outline:none;
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Tema 1 · Introducción a la Interacción Persona-Ordenador — Banco 50</h1>
+      <div class="sub">Puntuación: +1 correcta · −1/3 incorrecta · 0 en blanco. Puedes navegar (Anterior/Siguiente) y confirmar cuando quieras.</div>
+    </div>
+    <div class="pill">Preg. <b id="qNum">0</b>/<span id="qTotal">0</span> · Nota: <b id="scoreNow">0.00</b></div>
+  </header>
+
+  <div class="card">
+    <!-- SETUP -->
+    <div class="setup" id="setup">
+      <div class="row">
+        <div>
+          <div style="font-size:16px; font-weight:900;">Configura tu test (banco 50)</div>
+          <div class="small">Elige cuántas preguntas quieres hacer (N). Se eligen aleatoriamente del banco y se barajan las opciones para que la correcta no caiga “siempre” en A/B.</div>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="row" style="align-items:flex-end;">
+        <div>
+          <div class="small" style="margin:0 0 6px;">Número de preguntas (N)</div>
+          <input type="number" id="numQuestions" min="5" max="50" value="30" />
+          <div class="small">Máximo: 50 (todo el banco).</div>
+        </div>
+        <div>
+          <div class="small" style="margin:0 0 6px;">Modo</div>
+          <select id="modeSelect">
+            <option value="instant">Feedback al confirmar (recomendado)</option>
+            <option value="exam">Modo examen (sin feedback hasta el final)</option>
+          </select>
+          <div class="small">En modo examen: confirmas, puntúa, pero no te digo si está bien hasta el final.</div>
+        </div>
+        <div class="actions" style="margin-top:0;">
+          <button class="primary" id="btnStart">Empezar</button>
+          <button class="danger" id="btnHardReset">Reset total</button>
+        </div>
+      </div>
+      <div class="small" id="setupNote"></div>
+    </div>
+
+    <!-- QUIZ -->
+    <div class="quiz" id="quiz">
+      <div class="row">
+        <div class="topic" id="topicTag"></div>
+        <div class="topic">
+          Confirmadas: <b id="doneCount">0</b> · Correctas: <b id="okCount">0</b> · Incorrectas: <b id="badCount">0</b> · En blanco: <b id="blankCount">0</b>
+        </div>
+      </div>
+
+      <div class="progress" aria-label="Progreso">
+        <div class="bar" id="bar"></div>
+      </div>
+
+      <div class="q" id="questionText"></div>
+      <div class="opts" id="options"></div>
+
+      <div class="actions">
+        <button id="btnPrev">⬅️ Anterior</button>
+        <button id="btnNext">Siguiente ➡️</button>
+        <button class="ok" id="btnConfirm">Confirmar / Puntuar</button>
+        <button id="btnSkip">Dejar en blanco</button>
+        <button class="danger" id="btnFinish">Finalizar test</button>
+      </div>
+
+      <div class="feedback" id="feedbackBox"></div>
+      <div class="small" id="hintText"></div>
+
+      <!-- SUMMARY -->
+      <div class="summary" id="summary">
+        <h2 style="margin:14px 0 8px; font-size:18px;">Resultado final</h2>
+        <div class="grid">
+          <div class="kpi"><div class="n" id="finalScore">0.00</div><div class="t">Nota (con penalización 1/3)</div></div>
+          <div class="kpi"><div class="n" id="finalOk">0</div><div class="t">Correctas</div></div>
+          <div class="kpi"><div class="n" id="finalBad">0</div><div class="t">Incorrectas</div></div>
+          <div class="kpi"><div class="n" id="finalBlank">0</div><div class="t">En blanco</div></div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="row">
+          <div style="font-weight:900;">Revisión pregunta por pregunta</div>
+          <div class="actions" style="margin-top:0;">
+            <button id="btnExpandAll">Expandir todo</button>
+            <button id="btnCollapseAll">Contraer todo</button>
+            <button class="primary" id="btnBackToSetup">Hacer otro test</button>
+          </div>
+        </div>
+
+        <div class="review" id="reviewList"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const NEG = 1/3;
+  const ABCD = (i) => String.fromCharCode(65+i);
+  const fmt = (n)=> (Math.round(n*100)/100).toFixed(2);
+  function shuffle(arr){
+    for(let i=arr.length-1;i>0;i--){
+      const j = Math.floor(Math.random()*(i+1));
+      [arr[i],arr[j]] = [arr[j],arr[i]];
+    }
+    return arr;
+  }
+
+  // Banco 50 (Tema 1)
+  const BANK = [
+    {topic:"IPO · Definición", q:"Según ACM SIGCHI (1992), la IPO es la disciplina relacionada con:", options:[
+      "El análisis financiero de sistemas informáticos.",
+      "El diseño, implementación y evaluación de sistemas informáticos interactivos para uso de seres humanos y el estudio de fenómenos relacionados.",
+      "La programación de sistemas operativos para servidores.",
+      "La creación de hardware para redes."
+    ], a:1, exp:"Definición de la diapositiva de “Definiciones” (ACM SIGCHI, 1992)."},
+    {topic:"IPO · Terminología", q:"En inglés, Interacción Persona-Ordenador se denomina:", options:[
+      "HCI/CHI", "HTTP/HTML", "UX/UI", "API/SDK"
+    ], a:0, exp:"Human-Computer Interaction (HCI/CHI)."},
+    {topic:"IPO · Alcance", q:"La IPO NO se limita a:", options:[
+      "La situación clásica de una persona sentada ante un terminal.",
+      "Dispositivos en muchas formas (móvil, táctil, etc.).",
+      "Sistemas interactivos en general.",
+      "Fenómenos relacionados con el uso."
+    ], a:0, exp:"Se recalca que no se limita al escenario clásico (terminal)."},
+    {topic:"Objetivos IPO", q:"Un objetivo de la IPO es desarrollar o mejorar:", options:[
+      "Seguridad, utilidad, efectividad, eficiencia y usabilidad.",
+      "Sólo la estética visual.",
+      "Únicamente la velocidad del procesador.",
+      "Exclusivamente la seguridad física del edificio."
+    ], a:0, exp:"Lista explícita en “Objetivos”."},
+    {topic:"Objetivos IPO", q:"Para hacer sistemas usables es preciso comprender factores:", options:[
+      "Sólo económicos y legales.",
+      "Psicológicos, ergonómicos, de organización y sociales.",
+      "Exclusivamente de marketing.",
+      "Sólo tecnológicos de red."
+    ], a:1, exp:"Se enumeran esos factores en objetivos."},
+    {topic:"Objetivos IPO", q:"Según el tema, los usuarios:", options:[
+      "Deben cambiar radicalmente su manera de ser.",
+      "No han de cambiar radicalmente; los sistemas deben diseñarse para satisfacer requisitos del usuario.",
+      "Deben memorizar todos los comandos.",
+      "Deben adaptarse sin formación."
+    ], a:1, exp:"Idea clave: diseñar para el usuario."},
+    {topic:"Importancia IPO", q:"Se menciona que la interfaz constituye aprox. entre:", options:[
+      "10% y 20% de las líneas de código.",
+      "47% y 60% de las líneas de código.",
+      "70% y 90% de las líneas de código.",
+      "1% y 5% de las líneas de código."
+    ], a:1, exp:"Dato citado (McIntyre, 90)."},
+    {topic:"Importancia IPO", q:"Se indica que un 48% del código está dedicado a:", options:[
+      "Desarrollo de la interfaz.",
+      "Algoritmos de IA.",
+      "Bases de datos.",
+      "Criptografía."
+    ], a:0, exp:"Dato citado (Myers, 92)."},
+    {topic:"Disciplinas", q:"¿Cuál de estas aparece como disciplina relacionada con IPO en el tema?", options:[
+      "Astrología", "Ergonomía", "Geología", "Botánica"
+    ], a:1, exp:"Mapa de disciplinas: Psicología, Diseño, Sociología, Ergonomía, Programación, Ing. Software, IA."},
+    {topic:"Psicología", q:"La contribución de la psicología a la IPO incluye:", options:[
+      "Sólo medir temperatura del hardware.",
+      "Teorías sobre comportamiento y procesamiento de información + metodologías para evaluar satisfacción con el diseño.",
+      "Sólo diseño de servidores.",
+      "Sólo clasificación tipográfica."
+    ], a:1, exp:"Se indica explícitamente en “Psicología”."},
+    {topic:"Psicología", q:"La psicología cognitiva trata de:", options:[
+      "Estudiar el origen y causas del comportamiento en contexto social.",
+      "Comprender el comportamiento humano y los procesos mentales que comporta.",
+      "Diseñar objetos visualmente agradables.",
+      "Simular voz mediante agentes inteligentes."
+    ], a:1, exp:"Definición en la diapositiva de Psicología."},
+    {topic:"Psicología", q:"La psicología social trata de:", options:[
+      "Comprender procesos mentales individuales.",
+      "Estudiar el origen y causas del comportamiento humano en un contexto social.",
+      "Diseñar tutores inteligentes.",
+      "Definir ergonomía del entorno físico."
+    ], a:1, exp:"Definición en la diapositiva de Psicología."},
+    {topic:"Ergonomía", q:"La ergonomía estudia:", options:[
+      "Características físicas de la interacción (entorno físico).",
+      "Sólo procesos mentales.",
+      "Sólo diseño de logotipos.",
+      "Sólo protocolos web."
+    ], a:0, exp:"Ergonomía: características físicas de la interacción."},
+    {topic:"Ergonomía", q:"Objetivo de la ergonomía según el tema:", options:[
+      "Maximizar seguridad, eficiencia y fiabilidad; simplificar tareas e incrementar confort y satisfacción.",
+      "Maximizar complejidad para retar al usuario.",
+      "Reducir la satisfacción del usuario.",
+      "Eliminar el uso del color."
+    ], a:0, exp:"Frase literal del tema."},
+    {topic:"Ergonomía", q:"Ejemplo de aspecto considerado por la ergonomía:", options:[
+      "Organización de controles y pantallas para acción rápida.",
+      "Definir metadatos SEO.",
+      "Clasificar fuentes tipográficas.",
+      "Implementar HTTP/2."
+    ], a:0, exp:"Lista de ejemplos en “Ergonomía”."},
+    {topic:"Sociología/Etnografía", q:"Se menciona que grandes compañías reclutan antropólogos para:", options:[
+      "Auditar contabilidad.",
+      "Comprender mejor a clientes y diseñar productos que reflejen tendencias culturales.",
+      "Aumentar frecuencia de CPU.",
+      "Crear protocolos de red."
+    ], a:1, exp:"Diapositiva de “Sociología y etnografía”."},
+    {topic:"Diseño", q:"El diseño (en el tema) se describe como:", options:[
+      "Actividad para producción en serie de objetos útiles y visualmente agradables.",
+      "Sólo programación de bajo nivel.",
+      "Sólo análisis estadístico.",
+      "Sólo psicología clínica."
+    ], a:0, exp:"Definición en diapositiva de Diseño."},
+    {topic:"IA", q:"Ejemplo de uso de IA en IPO:", options:[
+      "Interfaces en lenguaje natural mediante voz.",
+      "Validación XHTML.",
+      "Cálculo de nóminas.",
+      "Compresión ZIP."
+    ], a:0, exp:"Ejemplos: lenguaje natural por voz, agentes inteligentes, etc."},
+    {topic:"Ing. Software", q:"Se afirma que sólo con procedimientos y técnicas de ingeniería se consigue:", options:[
+      "Un software de calidad.",
+      "Un color compatible.",
+      "Una memoria sensorial más larga.",
+      "Un banner más visible."
+    ], a:0, exp:"Diapositiva de Ingeniería del Software."},
+    {topic:"Factores humanos", q:"En el pasado, los diseñadores de sistemas:", options:[
+      "Daban máxima importancia al elemento humano.",
+      "No daban ninguna importancia al elemento humano.",
+      "Sólo estudiaban iconos.",
+      "Sólo estudiaban olfato."
+    ], a:1, exp:"Diapositiva de “Factores humanos”."},
+    {topic:"Cognición", q:"La disciplina científica que estudia el sistema de procesamiento de información humano es:", options:[
+      "Psicología cognitiva.", "Psicología humanista.", "Sociología", "Programación"
+    ], a:0, exp:"Se indica explícitamente."},
+    {topic:"Entrada/Salida", q:"Según el esquema, la entrada al sistema humano se realiza por:", options:[
+      "Actuadores (efectores).",
+      "Percepción a través de los sentidos.",
+      "Compiladores.",
+      "Banners."
+    ], a:1, exp:"Entrada: percepción; salida: acciones (efectores)."},
+    {topic:"Sentidos", q:"Los sentidos con mayor incidencia (según el tema) son:", options:[
+      "Vista y oído.",
+      "Gusto y olfato.",
+      "Tacto y gusto.",
+      "Olfato y oído."
+    ], a:0, exp:"Vista y oído; luego tacto/olfato en menor medida."},
+    {topic:"Percepción", q:"Las percepciones más importantes para IPO son:", options:[
+      "Visual, acústica y háptica.",
+      "Gusto, olfato y equilibrio.",
+      "Sólo visual.",
+      "Sólo auditiva."
+    ], a:0, exp:"Se enumeran visual (ojo), acústica (oído), háptica (tacto)."},
+    {topic:"Visión", q:"La visión es:", options:[
+      "La principal fuente de información.",
+      "Irrelevante para interfaces.",
+      "Menos importante que el gusto.",
+      "Sólo útil en VR."
+    ], a:0, exp:"Se afirma explícitamente."},
+    {topic:"Visión", q:"Componentes del proceso de visión citados:", options:[
+      "Color, brillo, tamaño/profundidad y ángulo visual.",
+      "Sólo color.",
+      "Sólo tamaño.",
+      "Metadatos y SEO."
+    ], a:0, exp:"Lista en la diapositiva de visión."},
+    {topic:"Color", q:"El ojo percibe el color a través de:", options:[
+      "Conos sensibles a diferentes longitudes de onda.",
+      "Bastones exclusivos para color.",
+      "Tímpano.",
+      "Córnea como sensor de audio."
+    ], a:0, exp:"Se menciona conos y longitudes de onda."},
+    {topic:"Color · Oponentes", q:"Se recomienda evitar combinaciones de colores oponentes como:", options:[
+      "Rojo-verde y amarillo-azul.",
+      "Blanco-gris.",
+      "Negro-blanco.",
+      "Verde-blanco."
+    ], a:0, exp:"Ejemplos: rojo-verde, amarillo-azul; también casos de vibración perceptiva."},
+    {topic:"Color · Reglas", q:"Recomendación general correcta:", options:[
+      "Usar alto contraste entre letra y fondo.",
+      "Usar el máximo número de colores posible.",
+      "Usar siempre colores muy saturados.",
+      "Usar rojo-verde para destacar."
+    ], a:0, exp:"Lista de recomendaciones generales."},
+    {topic:"Color · Nº colores", q:"El tema recomienda limitar el número de colores aproximadamente a:", options:[
+      "4 para novatos y 7 para expertos.",
+      "1 para novatos y 2 para expertos.",
+      "10 para novatos y 20 para expertos.",
+      "Sin límite."
+    ], a:0, exp:"Regla 4/7 indicada en la diapositiva."},
+    {topic:"Color · Fondo", q:"Se recomienda usar azul claro:", options:[
+      "Sólo para áreas de fondo.",
+      "Sólo para texto pequeño.",
+      "Sólo para enlaces visitados.",
+      "Nunca en interfaces."
+    ], a:0, exp:"Recomendación explícita."},
+    {topic:"Color · Periferia", q:"Se recomienda usar blanco para:", options:[
+      "Información periférica.",
+      "Texto principal siempre.",
+      "Avisos de error únicamente.",
+      "Sombras de iconos."
+    ], a:0, exp:"Recomendación explícita."},
+    {topic:"Color · Redundancia", q:"En codificación por color, se recomienda:", options:[
+      "Usar códigos redundantes (formas además de colores).",
+      "No usar formas nunca.",
+      "Usar sólo color, sin texto.",
+      "Usar sólo rojo y verde."
+    ], a:0, exp:"“Códigos redundantes” en recomendaciones."},
+    {topic:"Color · Daltonismo", q:"Se indica que tienen problemas de visión del color aprox.:", options:[
+      "8% de hombres y 1% de mujeres.",
+      "1% de hombres y 8% de mujeres.",
+      "50% de la población.",
+      "Nadie."
+    ], a:0, exp:"Dato explícito en la diapositiva de visión del color."},
+    {topic:"Color · Tipos", q:"Un protanopa es:", options:[
+      "Insensible al rojo.",
+      "Insensible al verde.",
+      "Insensible al azul y amarillo.",
+      "Sin visión del color (monocrómata)."
+    ], a:0, exp:"Tabla: Protanopa = insensible al rojo."},
+    {topic:"Color · Tipos", q:"Un deuterópata es:", options:[
+      "Insensible al verde.",
+      "Insensible al rojo.",
+      "Insensible al azul y amarillo.",
+      "Visión cromática normal."
+    ], a:0, exp:"Tabla: Deuterópata = insensible al verde."},
+    {topic:"Color · Tipos", q:"Un tritanopa es:", options:[
+      "Insensible al azul y amarillo.",
+      "Insensible al verde.",
+      "Insensible al rojo.",
+      "Monocrómata."
+    ], a:0, exp:"Tabla: Tritanopa = insensible al azul y amarillo."},
+    {topic:"Brillo/Luminancia", q:"La agudeza visual mejora con la luminancia, pero si es muy elevada:", options:[
+      "Se incrementa el parpadeo.",
+      "Desaparece el parpadeo.",
+      "El usuario oye mejor.",
+      "No afecta."
+    ], a:0, exp:"Se indica explícitamente en la diapositiva de brillo."},
+    {topic:"Profundidad", q:"Clave de profundidad dada por la propia imagen:", options:[
+      "Superposición (occlusión).",
+      "Tímpano.",
+      "Memoria sensorial.",
+      "Banner blindness."
+    ], a:0, exp:"Lista de claves: superposición, perspectiva, tamaño relativo, etc."},
+    {topic:"Profundidad", q:"Clave dada por la estructura del sistema visual:", options:[
+      "Disparidad binocular.",
+      "Perspectiva lineal.",
+      "Gradiente de textura.",
+      "Altura relativa."
+    ], a:0, exp:"Estructura visual: disparidad binocular, paralaje de movimiento."},
+    {topic:"Atención", q:"La atención funciona como:", options:[
+      "Un filtro que restringe la información analizada en cada momento.",
+      "Una memoria permanente.",
+      "Un sentido adicional.",
+      "Un tipo de icono."
+    ], a:0, exp:"Definición: filtro por capacidad limitada."},
+    {topic:"Atención", q:"Según los estudios citados, las personas:", options:[
+      "Rastrean toda la imagen de forma exhaustiva.",
+      "Se centran en áreas de alto contenido informativo.",
+      "Sólo miran banners.",
+      "Sólo miran el pie de página."
+    ], a:1, exp:"Se indica que no rastrean todo; se centran en zonas informativas."},
+    {topic:"Ceguera al banner", q:"La “ceguera al banner” (Benway, 1998) significa que:", options:[
+      "Los usuarios ignoran banners por experiencia publicitaria, aunque sean llamativos.",
+      "Los usuarios siempre hacen clic en banners.",
+      "Los banners no cargan.",
+      "Los banners son ilegibles por falta de contraste."
+    ], a:0, exp:"Definición textual del fenómeno."},
+    {topic:"Iconos", q:"Los iconos permiten:", options:[
+      "Acceso directo y más rápido que la palabra a información semántica del objeto representado.",
+      "Mayor lentitud que el texto siempre.",
+      "Eliminar la necesidad de atención.",
+      "Evitar la redundancia."
+    ], a:0, exp:"Se afirma explícitamente."},
+    {topic:"Iconos · Reglas", q:"Recomendación correcta para iconos:", options:[
+      "Evitar que tengan varias interpretaciones.",
+      "Cambiar su posición en cada pantalla.",
+      "Hacerlos muy parecidos entre sí.",
+      "Maximizar ambigüedad."
+    ], a:0, exp:"Lista de recomendaciones: discriminables, misma posición, etc."},
+    {topic:"Affordances", q:"Una affordance se define como:", options:[
+      "Funciones de un objeto percibidas directamente a partir de su imagen (p.ej., ‘ser presionado’).",
+      "Una tabla de colores.",
+      "Un banner llamativo.",
+      "Una técnica de compresión."
+    ], a:0, exp:"Definición literal en la diapositiva."},
+    {topic:"Affordances · Requisitos", q:"Requisitos para conseguir affordances:", options:[
+      "Forma funcional, visibilidad y acción coherente.",
+      "Sólo color saturado.",
+      "Sólo tipografía grande.",
+      "Sólo animaciones."
+    ], a:0, exp:"Lista explícita."},
+    {topic:"Legibilidad", q:"Se indica que leemos alrededor de:", options:[
+      "250 palabras por minuto en buenas condiciones.",
+      "50 palabras por minuto.",
+      "1000 palabras por minuto.",
+      "No se puede medir."
+    ], a:0, exp:"Dato de legibilidad."},
+    {topic:"Legibilidad", q:"Los mejores tamaños de letra para texto (según el tema) están entre:", options:[
+      "9 y 12 puntos.", "3 y 5 puntos.", "18 y 24 puntos.", "Depende, no hay rango."
+    ], a:0, exp:"Dato explícito."},
+    {topic:"Legibilidad", q:"Longitud recomendada de línea:", options:[
+      "Entre 6 y 13 cm.", "Entre 1 y 3 cm.", "Entre 20 y 40 cm.", "Sin recomendación."
+    ], a:0, exp:"Dato explícito."},
+    {topic:"Tacto", q:"El tacto es importante especialmente en:", options:[
+      "Sistemas de Realidad Virtual y para personas con discapacidad visual o auditiva.",
+      "SEO de páginas web.",
+      "Compresión de imágenes.",
+      "Diseño de protocolos."
+    ], a:0, exp:"Diapositiva del tacto."},
+    {topic:"Olfato", q:"El olfato en IPO se relaciona con:", options:[
+      "Crear mundos virtuales y conexión con el sistema de emociones (interfaces emocionales).",
+      "Mejorar la velocidad de lectura.",
+      "Evitar el uso de color.",
+      "Sustituir la vista."
+    ], a:0, exp:"Diapositiva del olfato."},
+    {topic:"Memoria · Sperling", q:"En el experimento de Sperling (12 letras, 50 ms), el recuerdo medio fue aprox.:", options:[
+      "4,5 letras.", "1,5 letras.", "12 letras.", "0 letras."
+    ], a:0, exp:"Se da el promedio 4,5."},
+    {topic:"Memoria · Sperling", q:"En la parte 2 (tono por fila), recuerdan aprox.:", options:[
+      "Entre 3 y 4 letras de una sola fila.", "0 letras.", "12 letras completas.", "1 letra como máximo."
+    ], a:0, exp:"Resultado obtenido: 3–4 letras de una fila."},
+    {topic:"Memoria sensorial", q:"Sperling estableció la duración de la memoria sensorial en:", options:[
+      "250 ms.", "2 segundos.", "10 ms.", "5 minutos."
+    ], a:0, exp:"Dato explícito en conclusiones."},
+    {topic:"Atención · Definición", q:"La atención se define como:", options:[
+      "Proceso de concentración mental sobre un conjunto de estímulos (o pensamientos).",
+      "Capacidad ilimitada de retención sensorial.",
+      "Un tipo de percepción exclusivamente visual.",
+      "Un protocolo de interacción."
+    ], a:0, exp:"Definición textual en la diapositiva de atención."},
+    {topic:"Atención selectiva", q:"Prestamos atención selectivamente porque:", options:[
+      "Tenemos capacidad limitada; sin selección podríamos ser desbordados (overloaded).",
+      "Tenemos capacidad infinita.",
+      "Los estímulos no influyen.",
+      "La memoria sensorial es permanente."
+    ], a:0, exp:"Se indica limitación y riesgo de overload."},
+    {topic:"Interfaz", q:"En IPO, una interfaz es:", options:[
+      "Superficie de contacto entre dos entidades.",
+      "Sólo una pantalla.",
+      "Sólo el ratón.",
+      "Sólo el código."
+    ], a:0, exp:"Definición en el tema: superficie de contacto."},
+    {topic:"Interfaz · Moran", q:"Según Moran, la interfaz son:", options:[
+      "Los aspectos del sistema con los que el usuario entra en contacto.",
+      "Sólo los aspectos físicos del teclado.",
+      "Sólo la estética del diseño.",
+      "Sólo el sistema operativo."
+    ], a:0, exp:"Definición atribuida a Moran."},
+    {topic:"Interfaz · Laurel", q:"Según Laurel (1992), una interfaz:", options:[
+      "Refleja propiedades físicas, permite intuir funciones y da un balance de poder y control.",
+      "No tiene relación con control.",
+      "Es sólo una capa gráfica.",
+      "Es únicamente un manual de usuario."
+    ], a:0, exp:"Resumen de la cita de Laurel."},
+    {topic:"Interfaz · CHI", q:"Según CHI, una interfaz incluye:", options:[
+      "Lenguaje de entrada para el usuario, lenguaje de salida para el ordenador y un protocolo de interacción.",
+      "Sólo lenguaje de salida.",
+      "Sólo lenguaje de entrada.",
+      "Sólo un conjunto de iconos."
+    ], a:0, exp:"Definición en la diapositiva final de interfaz."}
+  ];
+
+  // --- Estado
+  let session = [];
+  let idx = 0;
+  let score = 0, ok = 0, bad = 0, blank = 0;
+  let mode = "instant";
+
+  // --- Elementos
+  const elSetup = document.getElementById("setup");
+  const elQuiz = document.getElementById("quiz");
+  const elSummary = document.getElementById("summary");
+  const elReviewList = document.getElementById("reviewList");
+
+  const elQNum = document.getElementById("qNum");
+  const elQTotal = document.getElementById("qTotal");
+  const elScoreNow = document.getElementById("scoreNow");
+  const elTopic = document.getElementById("topicTag");
+  const elBar = document.getElementById("bar");
+  const elQuestion = document.getElementById("questionText");
+  const elOptions = document.getElementById("options");
+  const elFeedback = document.getElementById("feedbackBox");
+  const elHint = document.getElementById("hintText");
+
+  const elDone = document.getElementById("doneCount");
+  const elOk = document.getElementById("okCount");
+  const elBad = document.getElementById("badCount");
+  const elBlank = document.getElementById("blankCount");
+
+  const btnStart = document.getElementById("btnStart");
+  const btnHardReset = document.getElementById("btnHardReset");
+  const btnPrev = document.getElementById("btnPrev");
+  const btnNext = document.getElementById("btnNext");
+  const btnConfirm = document.getElementById("btnConfirm");
+  const btnSkip = document.getElementById("btnSkip");
+  const btnFinish = document.getElementById("btnFinish");
+
+  const btnExpandAll = document.getElementById("btnExpandAll");
+  const btnCollapseAll = document.getElementById("btnCollapseAll");
+  const btnBackToSetup = document.getElementById("btnBackToSetup");
+
+  const elFinalScore = document.getElementById("finalScore");
+  const elFinalOk = document.getElementById("finalOk");
+  const elFinalBad = document.getElementById("finalBad");
+  const elFinalBlank = document.getElementById("finalBlank");
+
+  const numQuestions = document.getElementById("numQuestions");
+  const modeSelect = document.getElementById("modeSelect");
+  const setupNote = document.getElementById("setupNote");
+
+  function clearFeedback(){
+    elFeedback.style.display = "none";
+    elFeedback.className = "feedback";
+    elFeedback.innerHTML = "";
+    elHint.textContent = "";
+  }
+  function showFeedback(kind, title, body){
+    elFeedback.style.display = "block";
+    elFeedback.className = `feedback ${kind}`;
+    elFeedback.innerHTML = `<b>${title}</b><div style="margin-top:6px; color: var(--muted);">${body}</div>`;
+  }
+  function updateHeader(){
+    elQNum.textContent = String(session.length ? (idx+1) : 0);
+    elQTotal.textContent = String(session.length);
+    elScoreNow.textContent = fmt(score);
+
+    const done = session.filter(x=>x.graded).length;
+    elDone.textContent = String(done);
+    elOk.textContent = String(ok);
+    elBad.textContent = String(bad);
+    elBlank.textContent = String(blank);
+
+    const pct = session.length ? Math.round((done / session.length) * 100) : 0;
+    elBar.style.width = pct + "%";
+
+    btnPrev.disabled = (idx<=0);
+    btnNext.disabled = (idx>=session.length-1);
+  }
+  function getSelected(){
+    const chosen = document.querySelector('input[name="answer"]:checked');
+    return chosen ? Number(chosen.value) : null;
+  }
+  function renderQuestion(){
+    if(!session.length) return;
+    clearFeedback();
+    elSummary.style.display = "none";
+
+    const item = session[idx];
+    elTopic.textContent = item.original.topic;
+    elQuestion.textContent = item.original.q;
+
+    elOptions.innerHTML = "";
+    item.options.forEach((opt, i) => {
+      const id = `opt_${idx}_${i}`;
+      const lab = document.createElement("label");
+      lab.className = "opt";
+      lab.setAttribute("for", id);
+
+      const radio = document.createElement("input");
+      radio.type = "radio";
+      radio.name = "answer";
+      radio.id = id;
+      radio.value = String(i);
+      if(item.userChoice === i) radio.checked = true;
+      if(item.graded) radio.disabled = true;
+
+      const span = document.createElement("span");
+      span.innerHTML = `<b>${ABCD(i)})</b> ${opt}`;
+
+      lab.appendChild(radio);
+      lab.appendChild(span);
+      elOptions.appendChild(lab);
+    });
+
+    btnConfirm.disabled = item.graded;
+    btnSkip.disabled = item.graded;
+
+    if(item.graded && mode === "instant"){
+      if(item.status === "correct"){
+        showFeedback("ok","✅ Correcta", item.original.exp || "");
+      }else if(item.status === "incorrect"){
+        showFeedback("bad","❌ Incorrecta", `La correcta era <b>${ABCD(item.correctIndex)}</b>. ${item.original.exp || ""}`);
+      }else if(item.status === "blank"){
+        showFeedback("warn","➡️ En blanco", `No penaliza. Correcta: <b>${ABCD(item.correctIndex)}</b>. ${item.original.exp || ""}`);
+      }
+    }else if(item.graded && mode === "exam"){
+      showFeedback("warn","Modo examen","Esta pregunta ya está confirmada. La corrección completa sale al final.");
+    }
+
+    updateHeader();
+  }
+  function saveSelectionFromUI(){
+    session[idx].userChoice = getSelected();
+  }
+  function gradeCurrent(asBlank=false){
+    const item = session[idx];
+    if(item.graded) return;
+
+    const sel = asBlank ? null : getSelected();
+    if(!asBlank && sel === null){
+      showFeedback("warn","Sin marcar opción", "Marca una opción o usa “Dejar en blanco”.");
+      return;
+    }
+
+    item.graded = true;
+
+    if(asBlank){
+      item.userChoice = null;
+      item.status = "blank";
+      blank++;
+      if(mode==="instant"){
+        showFeedback("warn","➡️ En blanco", `No penaliza. Correcta: <b>${ABCD(item.correctIndex)}</b>. ${item.original.exp || ""}`);
+      }
+    }else{
+      item.userChoice = sel;
+      if(sel === item.correctIndex){
+        item.status = "correct";
+        ok++; score += 1;
+        if(mode==="instant") showFeedback("ok","✅ Correcta", item.original.exp || "");
+      }else{
+        item.status = "incorrect";
+        bad++; score -= NEG;
+        if(mode==="instant"){
+          showFeedback("bad","❌ Incorrecta", `La correcta era <b>${ABCD(item.correctIndex)}</b>. ${item.original.exp || ""}`);
+        }
+      }
+    }
+
+    document.querySelectorAll('input[name="answer"]').forEach(r => r.disabled = true);
+    btnConfirm.disabled = true;
+    btnSkip.disabled = true;
+    updateHeader();
+  }
+  function finish(){
+    for(const item of session){
+      if(!item.graded){
+        item.graded = true;
+        item.status = "blank";
+        item.userChoice = null;
+        blank++;
+      }
+    }
+    updateHeader();
+
+    elFinalScore.textContent = fmt(score);
+    elFinalOk.textContent = String(ok);
+    elFinalBad.textContent = String(bad);
+    elFinalBlank.textContent = String(blank);
+
+    elReviewList.innerHTML = "";
+    session.forEach((item, i)=>{
+      const user = item.userChoice;
+      const correct = item.correctIndex;
+      const status = item.status;
+      const statusLabel = status === "correct" ? "✅ Correcta" : status === "incorrect" ? "❌ Incorrecta" : "➡️ En blanco";
+      const statusClass = status === "correct" ? "correct" : status === "incorrect" ? "incorrect" : "blank";
+
+      const d = document.createElement("details");
+      d.className = "reviewItem";
+      const s = document.createElement("summary");
+      s.innerHTML = `Pregunta ${i+1}: ${statusLabel} <span class="tag">${item.original.topic}</span>`;
+      d.appendChild(s);
+
+      const body = document.createElement("div");
+      body.style.marginTop = "10px";
+      body.innerHTML = `
+        <div style="font-weight:800; margin-bottom:8px;">${item.original.q}</div>
+        <div class="ansLine">Tu respuesta: <b>${user===null ? "— (en blanco)" : (ABCD(user)+") "+item.options[user])}</b> · Correcta: <b>${ABCD(correct)}) ${item.options[correct]}</b>
+          · <span class="${statusClass}">${statusLabel}</span>
+        </div>
+        <div class="ansLine" style="margin-top:10px;">Explicación: <b>${item.original.exp || "—"}</b></div>
+        <div class="divider"></div>
+        <div class="small">
+          ${item.options.map((op, j)=>{
+            const mark = (j===correct) ? "✅" : (user!==null && j===user ? "❌" : "•");
+            return `<div style="margin:4px 0;">${mark} <b>${ABCD(j)})</b> ${op}</div>`;
+          }).join("")}
+        </div>
+      `;
+      d.appendChild(body);
+      elReviewList.appendChild(d);
+    });
+
+    elSummary.style.display = "block";
+    showFeedback("ok","Test finalizado", "Nota arriba y revisión completa con la respuesta correcta de cada una.");
+  }
+  function start(){
+    const n = Math.max(5, Math.min(50, Number(numQuestions.value || 30)));
+    mode = modeSelect.value;
+    setupNote.textContent = "";
+
+    idx = 0; score = 0; ok = 0; bad = 0; blank = 0;
+    clearFeedback();
+
+    const poolIdx = shuffle([...Array(BANK.length).keys()]).slice(0, n);
+    session = poolIdx.map(k=>{
+      const base = BANK[k];
+      const order = shuffle([...Array(base.options.length).keys()]);
+      const newOptions = order.map(i => base.options[i]);
+      const correctIndex = order.indexOf(base.a);
+      return {
+        original: base,
+        options: newOptions,
+        correctIndex,
+        userChoice: null,
+        graded: false,
+        status: "ungraded"
+      };
+    });
+
+    elSetup.style.display = "none";
+    elQuiz.style.display = "block";
+    elSummary.style.display = "none";
+    renderQuestion();
+    updateHeader();
+  }
+  function hardReset(){
+    session = [];
+    idx = 0; score = 0; ok = 0; bad = 0; blank = 0;
+    clearFeedback();
+    elQuiz.style.display = "none";
+    elSummary.style.display = "none";
+    elSetup.style.display = "block";
+    updateHeader();
+  }
+
+  btnStart.addEventListener("click", start);
+  btnHardReset.addEventListener("click", hardReset);
+  btnPrev.addEventListener("click", ()=>{ saveSelectionFromUI(); if(idx>0){ idx--; renderQuestion(); } });
+  btnNext.addEventListener("click", ()=>{ saveSelectionFromUI(); if(idx<session.length-1){ idx++; renderQuestion(); } });
+  btnConfirm.addEventListener("click", ()=> gradeCurrent(false));
+  btnSkip.addEventListener("click", ()=> gradeCurrent(true));
+  btnFinish.addEventListener("click", finish);
+
+  btnExpandAll.addEventListener("click", ()=> document.querySelectorAll("details.reviewItem").forEach(d=> d.open = true));
+  btnCollapseAll.addEventListener("click", ()=> document.querySelectorAll("details.reviewItem").forEach(d=> d.open = false));
+  btnBackToSetup.addEventListener("click", ()=> hardReset());
+
+  document.addEventListener("change", (e)=>{
+    if(e.target && e.target.name === "answer") saveSelectionFromUI();
+  });
+  document.addEventListener("keydown", (e)=>{
+    if(elQuiz.style.display !== "block") return;
+    if(e.key === "ArrowLeft"){ if(idx>0){ saveSelectionFromUI(); idx--; renderQuestion(); } }
+    if(e.key === "ArrowRight"){ if(idx<session.length-1){ saveSelectionFromUI(); idx++; renderQuestion(); } }
+    if(e.key === "Enter"){
+      e.preventDefault();
+      const it = session[idx];
+      if(it && !it.graded) gradeCurrent(false);
+    }
+  });
+
+  updateHeader();
+</script>
+</body>
+</html>
