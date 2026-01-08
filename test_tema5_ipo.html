@@ -1,0 +1,648 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tema 5 · IPO · Banco 50</title>
+  <style>
+    :root{
+      --bg:#0b1220;--card:#121a2b;--text:#e7eefc;--muted:#9aa4b2;--border:#24304a;
+      --accent:#6ea8fe;--ok:#57d18a;--bad:#ff6b6b;--warn:#ffd166;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      background: radial-gradient(1200px 600px at 20% 0%, #132044 0%, var(--bg) 60%);
+      color:var(--text);
+    }
+    .wrap{max-width:980px;margin:0 auto;padding:22px 14px 48px;}
+    .top{display:flex;gap:12px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap}
+    h1{margin:0;font-size:20px}
+    .sub{margin:6px 0 0;color:var(--muted);font-size:13px;line-height:1.35}
+    .pillrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+    .pill{border:1px solid var(--border);color:var(--muted);padding:3px 10px;border-radius:999px;font-size:12px}
+    .card{
+      margin-top:14px; border:1px solid var(--border);
+      background: linear-gradient(180deg, rgba(18,26,43,.92), rgba(18,26,43,.7));
+      border-radius:16px; padding:14px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.25);
+    }
+    .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+    label{font-size:13px;color:var(--muted)}
+    select, input[type="number"]{
+      background:#0b1220;color:var(--text);border:1px solid var(--border);
+      padding:10px 10px;border-radius:12px;outline:none;
+    }
+    button{
+      background:rgba(110,168,254,.16);
+      color:var(--text);border:1px solid rgba(110,168,254,.45);
+      padding:10px 12px;border-radius:12px;cursor:pointer;
+      font-weight:800;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+    }
+    button.primary{background:rgba(110,168,254,.85); color:#06101f; border-color:rgba(110,168,254,.85)}
+    button.good{background:rgba(87,209,138,.20); border-color:rgba(87,209,138,.55)}
+    button.ghost{background:transparent;border-color:var(--border);color:var(--muted)}
+    button:disabled{opacity:.45;cursor:not-allowed}
+    .qhead{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center}
+    .qmeta{color:var(--muted);font-size:12px}
+    .qtext{margin:10px 0 10px;font-size:16px;line-height:1.35}
+    .opts{display:grid;grid-template-columns:1fr;gap:10px;margin-top:8px}
+    .opt{
+      border:1px solid var(--border);
+      background: rgba(11,18,32,.55);
+      border-radius:14px;
+      padding:10px 10px;
+      display:flex;gap:10px;align-items:flex-start;
+    }
+    .opt input{margin-top:3px;transform:scale(1.15)}
+    .opt .txt{font-size:14px;line-height:1.3}
+    .bar{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;align-items:center}
+    .feedback{
+      margin-top:10px; border-radius:14px; padding:10px 12px; font-size:13px; line-height:1.35;
+      border:1px solid var(--border); background: rgba(11,18,32,.55);
+    }
+    .feedback.ok{border-color:rgba(87,209,138,.55); background: rgba(87,209,138,.10)}
+    .feedback.bad{border-color:rgba(255,107,107,.55); background: rgba(255,107,107,.10)}
+    .feedback.warn{border-color:rgba(255,209,102,.55); background: rgba(255,209,102,.10)}
+    .hr{height:1px;background:rgba(36,48,74,.7);margin:14px 0}
+    details.reviewItem{
+      border:1px solid var(--border); border-radius:14px; padding:10px 12px;
+      background: rgba(11,18,32,.55); margin-top:10px;
+    }
+    summary{cursor:pointer;font-weight:900}
+    .small{color:var(--muted);font-size:12px}
+    .tag{display:inline-block;border:1px solid var(--border);border-radius:999px;padding:2px 8px;margin-left:8px;color:var(--muted);font-size:12px}
+    .ans{margin-top:8px;font-size:13px;line-height:1.35}
+    .okText{color:var(--ok);font-weight:900}
+    .badText{color:var(--bad);font-weight:900}
+    .warnText{color:var(--warn);font-weight:900}
+    .footerNote{margin-top:10px;color:var(--muted);font-size:12px}
+    @media (max-width:720px){
+      button{width:100%}
+      .bar{flex-direction:column;align-items:stretch}
+      .qhead{flex-direction:column;align-items:flex-start}
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div>
+      <h1>Tema 5 · Interfaces de Escritorio (Banco 50)</h1>
+      <p class="sub">
+        Puntuación: <b>+1</b> correcta, <b>−1/3</b> incorrecta, <b>0</b> en blanco.
+        Navega con Atrás/Siguiente, confirma para corregir y revisa todo al final.
+      </p>
+      <div class="pillrow">
+        <span class="pill">Aleatorio</span>
+        <span class="pill">Móvil friendly</span>
+        <span class="pill">Revisión final</span>
+      </div>
+    </div>
+  </div>
+
+  <div id="setup" class="card">
+    <div class="row">
+      <div>
+        <label for="nq">¿Cuántas preguntas quieres hacer?</label><br/>
+        <input id="nq" type="number" min="1" max="50" value="20" />
+        <span class="small"> (máx. 50)</span>
+      </div>
+      <div>
+        <label for="seed">Orden</label><br/>
+        <select id="seed">
+          <option value="random" selected>Barajar cada vez</option>
+          <option value="fixed">Orden fijo (para repetir)</option>
+        </select>
+      </div>
+      <div style="flex:1"></div>
+      <div>
+        <button id="btnStart" class="primary">Empezar test</button>
+      </div>
+    </div>
+    <div class="footerNote">
+      iPhone: abre en Safari desde GitHub Pages y usa “Añadir a pantalla de inicio” para tenerlo como app.
+    </div>
+  </div>
+
+  <div id="quiz" class="card" style="display:none;">
+    <div class="qhead">
+      <div class="qmeta" id="qmeta">Pregunta 1/20</div>
+      <div class="qmeta" id="scoreLive">Aciertos: 0 · Fallos: 0 · En blanco: 0 · Nota: 0.00</div>
+    </div>
+
+    <div class="qtext" id="qtext"></div>
+
+    <div class="opts" id="opts"></div>
+
+    <div class="bar">
+      <button id="btnPrev" class="ghost">⬅️ Atrás</button>
+      <button id="btnNext" class="ghost">Siguiente ➡️</button>
+      <div style="flex:1"></div>
+      <button id="btnSkip" class="ghost">Dejar en blanco</button>
+      <button id="btnConfirm" class="primary">Confirmar respuesta</button>
+      <button id="btnFinish" class="good">Finalizar test</button>
+    </div>
+
+    <div id="feedback" class="feedback" style="display:none;"></div>
+  </div>
+
+  <div id="results" class="card" style="display:none;">
+    <h2 style="margin:0 0 6px;">Resultados</h2>
+    <div class="qmeta" id="finalLine"></div>
+    <div class="hr"></div>
+    <div class="bar">
+      <button id="btnExpandAll" class="ghost">Expandir todo</button>
+      <button id="btnCollapseAll" class="ghost">Colapsar todo</button>
+      <div style="flex:1"></div>
+      <button id="btnBackToSetup" class="primary">Hacer otro test</button>
+    </div>
+    <div id="review"></div>
+  </div>
+</div>
+
+<script>
+/* ========= UTILIDADES ========= */
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+function clamp(n, lo, hi){ return Math.max(lo, Math.min(hi, n)); }
+function fmt(n){ return (Math.round(n*100)/100).toFixed(2); }
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, (c)=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+}
+/* Click único (evita doble salto en móvil) */
+function onClick(id, fn){
+  document.getElementById(id).addEventListener("click", (e)=>{ e.preventDefault(); fn(); });
+}
+
+/* ========= BANCO 50 (Tema 5) =========
+   He intentado evitar el patrón “la correcta es la más larga”: opciones con longitudes similares.
+*/
+const BANK = [
+  {q:"Una GUI (Graphic User Interface) es…",
+   a:["un programa que actúa como interfaz usando imágenes y objetos gráficos.","un lenguaje de comandos para sistemas tipo DOS.","un controlador hardware de pantallas y ratón.","un tipo de fichero que define temas visuales."], c:0,
+   e:"GUI: interfaz basada en imágenes/objetos gráficos para representar info y acciones."},
+
+  {q:"Según el tema, la GUI es una evolución de…",
+   a:["la línea de comandos tradicional (CLI) de sistemas como DOS.","los HMD de realidad virtual de primera generación.","los sistemas de voz continua dependientes del hablante.","las redes de sensores para dispositivos móviles."], c:0,
+   e:"Se menciona evolución desde CLI en sistemas como la familia DOS."},
+
+  {q:"El objetivo principal de Xerox Star era…",
+   a:["primar reconocimiento sobre memoria: ver y apuntar frente a recordar y escribir.","introducir menús contextuales en móviles táctiles.","sustituir iconos por lenguaje natural completo.","eliminar ventanas y menús para usar solo teclado."], c:0,
+   e:"Evitar aprender docenas de comandos; reconocimiento > memoria."},
+
+  {q:"Otro punto clave en Star para ser amigable era…",
+   a:["no abrumar con cientos de detalles indiferentes para el usuario.","forzar al usuario a memorizar abreviaturas de comandos.","usar siempre ventanas modales para todo.","dar errores con sonidos para llamar la atención."], c:0,
+   e:"No abrumar al usuario con detalles irrelevantes."},
+
+  {q:"En la filosofía de Star se buscaba que…",
+   a:["todo lo que pasase en el sistema pasase en la pantalla, no a espaldas del usuario.","el sistema trabajase oculto para no distraer al usuario.","solo existiesen acciones por teclado sin ratón.","la interfaz se centrase en scripts y macros."], c:0,
+   e:"Se indica que todo ocurra en pantalla para sensación de manipulación directa."},
+
+  {q:"En el tema, para Windows se destaca: “el rendimiento es…”",
+   a:["el principal asesino de la experiencia de usuario.","un detalle irrelevante frente al estilo visual.","solo importante en juegos, no en aplicaciones.","la razón para usar siempre más ventanas."], c:0,
+   e:"Frase literal: “El rendimiento es el principal asesino de la experiencia de usuario”."},
+
+  {q:"Entre los principios de diseño Windows del tema aparece…",
+   a:["cuidar el look and feel.","usar siempre texto azul aunque no sea enlace.","ocultar la desinstalación para no molestar.","centrarse en características, no experiencias."], c:0,
+   e:"Se lista “Cuidar el look and feel”."},
+
+  {q:"Otro principio citado: “Diseñar experiencias, no…”",
+   a:["características.","menús.","ventanas.","atajos."], c:0,
+   e:"Se menciona tal cual."},
+
+  {q:"El tema recomienda “no intentar hacer de todo para todos”, es decir…",
+   a:["focalizar el público objetivo de la aplicación.","meter opciones avanzadas para cualquier perfil.","duplicar funciones para más potencia.","usar asistentes para todo el flujo."], c:0,
+   e:"Se indica focalizar el público objetivo."},
+
+  {q:"Entre los “errores más comunes en el diseño” se incluyen categorías como…",
+   a:["Windows, Layouts, Texto, Controles, Teclado y Mouse.","Cámaras, GPS, Acelerómetros y Giroscopios.","HTML, CSS, JavaScript y SQL.","Voz, gestos, háptica y aromas."], c:0,
+   e:"Listado de categorías en la diapositiva de errores."},
+
+  {q:"En Windows, el tema indica soportar una resolución mínima de…",
+   a:["800x600 píxeles.","1024x768 píxeles.","1280x720 píxeles.","1920x1080 píxeles."], c:0,
+   e:"Recomendación explícita: mínimo 800x600."},
+
+  {q:"Según el tema, hay que probar ventanas en varios DPI, incluyendo…",
+   a:["96, 120 y 144 dpi.","72, 96 y 300 dpi.","100, 125 y 150 dpi.","60, 90 y 120 dpi."], c:0,
+   e:"Se recomienda probar en 96/120/144 dpi."},
+
+  {q:"En escenarios táctiles, el tema indica optimizar para…",
+   a:["120 dpi.","96 dpi.","72 dpi.","144 dpi."], c:0,
+   e:"Se menciona optimizar para 120 dpi en escenarios táctiles."},
+
+  {q:"Las subventanas deberían mostrarse…",
+   a:["encima de la ventana propietaria y centradas.","siempre en la esquina inferior izquierda.","en cascada, pegadas al borde derecho.","siempre en un monitor secundario."], c:0,
+   e:"Recomendación de posicionamiento de subventanas."},
+
+  {q:"En menús contextuales, el tema recomienda mostrar la pantalla…",
+   a:["en la parte derecha-baja del objeto padre.","siempre centrada en la pantalla.","en la parte izquierda-alta del objeto padre.","en la barra de tareas, no cerca del objeto."], c:0,
+   e:"Recomendación: derecha-baja del objeto padre."},
+
+  {q:"En Layouts, una recomendación es evitar truncamiento de texto con máximo…",
+   a:["65 caracteres de ancho.","30 caracteres de ancho.","80 caracteres de ancho.","120 caracteres de ancho."], c:0,
+   e:"Se indica “máximo 65 caracteres de ancho”."},
+
+  {q:"Si el texto aparece truncado, se sugiere…",
+   a:["asegurar que al redimensionar se ajuste al nuevo espacio.","forzar siempre un tamaño fijo de ventana.","recortar el texto sin posibilidad de ver más.","pasar todo a mayúsculas para que quepa."], c:0,
+   e:"Ajuste con redimensionado."},
+
+  {q:"En Texto, el tema recomienda…",
+   a:["eliminar redundancia y usar términos comunes.","usar jerga técnica para precisión.","usar siempre azul aunque no sea enlace.","evitar espacios entre líneas."], c:0,
+   e:"Lista: términos comunes, cortesía, eliminar redundancia, etc."},
+
+  {q:"Sobre color del texto, se indica…",
+   a:["no usar texto azul si no es un enlace.","usar siempre azul para destacar textos clave.","evitar negro porque “cansa la vista”.","usar solo rojo y verde en interfaces."], c:0,
+   e:"Recomendación explícita."},
+
+  {q:"En Controles, una recomendación clave es…",
+   a:["etiquetar todos los controles o grupos de controles.","evitar etiquetas para que el diseño sea limpio.","usar ‘Click aquí’ como texto estándar de enlace.","no usar barras de progreso nunca."], c:0,
+   e:"Se indica etiquetar controles/grupos."},
+
+  {q:"En enlaces, el tema recomienda…",
+   a:["no añadir texto ‘Click’ o ‘Click aquí’.","usar siempre ‘Click aquí’ por consistencia.","poner ‘OK’ para abrir enlaces.","esconder enlaces y usar solo iconos."], c:0,
+   e:"Se menciona expresamente."},
+
+  {q:"Para operaciones con cierto coste temporal se recomienda…",
+   a:["usar barras de progreso.","usar ventanas modales sin feedback.","mostrar un error al terminar.","no mostrar nada para no distraer."], c:0,
+   e:"Se indica usar barras de progreso."},
+
+  {q:"En Teclado, el foco principal debería ir…",
+   a:["al primer control.","al último control.","a un control aleatorio.","siempre al botón ‘Cancelar’."], c:0,
+   e:"Recomendación de foco."},
+
+  {q:"El flujo de tabulación debería ir…",
+   a:["de izquierda a derecha y de arriba a abajo.","de derecha a izquierda y de abajo a arriba.","en orden aleatorio para evitar automatismos.","solo vertical, nunca horizontal."], c:0,
+   e:"Recomendación literal."},
+
+  {q:"En Mouse, se recomienda…",
+   a:["no requerir sobre un objeto un click al usuario.","obligar a doble click en cualquier acción.","usar siempre cuadros modales.","no usar puntero de selección nunca."], c:0,
+   e:"Punto del apartado Mouse."},
+
+  {q:"Sobre cuadros modales (Mouse), el tema indica…",
+   a:["controlar su uso.","usarlos en todas las acciones importantes.","evitarlos solo en pantallas táctiles.","reemplazarlos por sonidos de error."], c:0,
+   e:"“Controlar el uso de cuadros modales”."},
+
+  {q:"El puntero de selección se recomienda usarlo solo para…",
+   a:["texto o enlaces de imágenes.","cualquier icono del escritorio.","botones de comando siempre.","menús contextuales siempre."], c:0,
+   e:"Recomendación del tema."},
+
+  {q:"En Hojas de propiedades, el tema recomienda…",
+   a:["no saturar con propiedades innecesarias.","meter todas las propiedades posibles.","usar pestañas incluso si hay una sola ficha.","ser genérico para reutilizar textos."], c:0,
+   e:"Se indica no saturar y ser específico."},
+
+  {q:"Se podrá usar una página general de propiedades si…",
+   a:["afecta a un gran número de usuarios.","solo afecta a un usuario experto.","es una opción de depuración interna.","no hay espacio en pantalla."], c:0,
+   e:"Criterio del tema."},
+
+  {q:"Sobre pestañas en propiedades, el tema sugiere…",
+   a:["evitarlas si solo ocupan una ficha; mejor diálogo regular.","usarlas siempre por consistencia.","usarlas solo si hay teclado DVORAK.","reemplazarlas por menús contextuales."], c:0,
+   e:"Recomendación explícita."},
+
+  {q:"En Asistentes/Hojas asistentes, el tema indica que…",
+   a:["los asistentes son una interfaz pesada y conviene valorar alternativas.","son siempre la mejor opción de diseño.","deben terminar con páginas de felicitación.","hay que usar ‘Finalizar’ siempre."], c:0,
+   e:"Se dice que son pesados y hay que valorar otro tipo de solución."},
+
+  {q:"En asistentes, se recomienda usar el botón ‘Siguiente’…",
+   a:["sin comprometer al usuario.","para confirmar acciones irreversibles siempre.","para borrar datos sin aviso.","solo si hay más de 10 pasos."], c:0,
+   e:"Recomendación literal."},
+
+  {q:"En asistentes, se recomienda ‘Confirmar’ en vez de…",
+   a:["Finalizar.","Cancelar.","Atrás.","Aceptar."], c:0,
+   e:"Se menciona “Utilizar Confirmar en vez de Finalizar”."},
+
+  {q:"En mensajes de error, NO se recomienda…",
+   a:["usar ‘OK’ para salir de un error.","proponer una solución cuando sea posible.","ser específico.","evitar errores donde el usuario no puede intervenir."], c:0,
+   e:"Se indica no usar OK para salir del error."},
+
+  {q:"En mensajes de error, se recomienda evitar palabras como…",
+   a:["‘Error’, ‘fallo’, ‘ilegal’, ‘inválido’, ‘abortar’.","‘ayuda’, ‘consejo’, ‘sugerencia’.","‘sí’, ‘no’, ‘quizá’.","‘guardar’, ‘abrir’, ‘cerrar’."], c:0,
+   e:"Listado de términos a evitar."},
+
+  {q:"Según el tema, los mensajes de error no deberían…",
+   a:["ir acompañados de sonidos.","mostrar el problema de forma específica.","proponer solución si es posible.","permitir al usuario actuar cuando puede."], c:0,
+   e:"Se recomienda no acompañarlos con sonidos."},
+
+  {q:"Las advertencias de error se definen como mensajes que…",
+   a:["advierten de un posible error futuro.","informan de un error ya ocurrido y bloquean siempre.","sirven solo para felicitar al usuario.","se usan únicamente al cerrar la aplicación."], c:0,
+   e:"Definición del tema."},
+
+  {q:"Sobre ‘Ayuda’, el tema indica que debe ser…",
+   a:["específica y con frases completas.","genérica y con frases sueltas.","solo iconos sin texto.","siempre offline aunque esté en la web."], c:0,
+   e:"Recomendación: específica y frases completas."},
+
+  {q:"Si el contenido de ayuda está online, se debe…",
+   a:["especificarlo.","ocultarlo para no distraer.","convertirlo a PDF siempre.","mostrarlo solo con sonidos."], c:0,
+   e:"Recomendación explícita."},
+
+  {q:"En el tema, algo ‘Cool’ incluye…",
+   a:["mejorar usabilidad sin perjudicar rendimiento.","usar tecnología porque se puede, sin más.","dar una impresión fugaz sin durabilidad.","añadir características que resten rendimiento."], c:0,
+   e:"Cool: usabilidad sin perjudicar rendimiento, impresión duradera, etc."},
+
+  {q:"En el tema, algo ‘No Cool’ incluye…",
+   a:["uso/abuso de tecnología porque se puede.","mejora de usabilidad sin impacto en rendimiento.","apariencia sutil y agradable.","características apropiadas para el programa."], c:0,
+   e:"No Cool: tecnología porque se puede, mala impresión fugaz, etc."},
+
+  {q:"Los ‘Globos’ (balloons) se describen como…",
+   a:["icono, título y texto; todos opcionales.","solo texto obligatorio sin icono.","solo icono obligatorio sin texto.","solo título obligatorio y nada más."], c:0,
+   e:"El tema: icono, título y texto, opcionales."},
+
+  {q:"Un checkbox permite…",
+   a:["escoger una opción claramente opuesta al resto.","seleccionar una única opción excluyente.","introducir texto largo multilinea.","mostrar progreso de una tarea."], c:0,
+   e:"Definición del tema."},
+
+  {q:"Los botones de comando se usan para…",
+   a:["iniciar una acción inmediata.","navegar siempre al siguiente paso.","seleccionar entre opciones excluyentes.","introducir un término de búsqueda."], c:0,
+   e:"Definición del tema."},
+
+  {q:"Los enlaces de comandos se usan cuando…",
+   a:["se selecciona una única opción para pasar al siguiente paso.","se quiere introducir un término de búsqueda.","se necesita elegir entre múltiples opciones simultáneas.","se quiere mostrar progreso continuo."], c:0,
+   e:"Definición del tema."},
+
+  {q:"Una lista desplegable/cuadro combinado sirve para…",
+   a:["escoger una opción entre opciones excluyentes.","elegir varias opciones a la vez.","mostrar advertencias de error.","representar la realidad con texturas."], c:0,
+   e:"Definición del tema."},
+
+  {q:"Las etiquetas deberían escribirse como…",
+   a:["una palabra o frase, no como oración.","una oración completa siempre.","un párrafo con explicación.","solo abreviaturas técnicas."], c:0,
+   e:"Recomendación del tema."},
+
+  {q:"Las barras de progreso…",
+   a:["muestran el progreso de una tarea.","sirven para introducir texto.","son equivalentes a radio buttons.","se usan para confirmar acciones."], c:0,
+   e:"Definición del tema."},
+
+  {q:"Los botones de radio funcionan como…",
+   a:["preajustes de canales de radio: opciones excluyentes.","checkboxes: opciones múltiples.","barras de progreso: avance temporal.","globos: avisos informativos."], c:0,
+   e:"Definición del tema."},
+
+  {q:"Un cuadro de búsqueda permite…",
+   a:["introducir un término de búsqueda dentro de la aplicación.","seleccionar una opción excluyente.","mostrar un error futuro.","configurar pestañas de propiedades."], c:0,
+   e:"Definición del tema."},
+
+  {q:"En WPF, el tema contrapone XAML y código: XAML se asocia a…",
+   a:["definir interfaz declarativamente (y compilar a BAML).","solo lógica de negocio en C#.","solo bases de datos y SQL.","solo iconos y texturas de escritorio."], c:0,
+   e:"Se muestra XAML vs código y aparece BAML como parte del proceso."},
+
+  {q:"Cocoa (Mac OS X) se describe como…",
+   a:["colección de frameworks/APIs/entornos para desarrollo Mac OS X.","una distribución Linux orientada a servidores.","un estándar ISO para iconos de escritorio.","una librería exclusiva de Windows."], c:0,
+   e:"Definición del tema."},
+
+  {q:"Según el tema, Cocoa utiliza el patrón…",
+   a:["Modelo–Vista–Controlador (MVC).","Cliente–Servidor (CS).","MapReduce (MR).","Publicador–Suscriptor (PS)."], c:0,
+   e:"Se indica Cocoa usa MVC."},
+
+  {q:"Con Interface Builder, el tema destaca que…",
+   a:["conecta con Cocoa y evita preocuparse del código subyacente.","obliga a escribir toda la interfaz a mano.","solo sirve para apps de consola (CLI).","no funciona con el patrón MVC."], c:0,
+   e:"Se menciona que Interface Builder conecta con Cocoa."},
+
+  {q:"En terminología centrada en el usuario, ‘Cursor’ equivale a…",
+   a:["Puntero.","Reiniciar.","Texto.","Click."], c:0,
+   e:"Tabla de equivalencias del tema."},
+
+  {q:"En la tabla de equivalencias, ‘Documento sucio’ equivale a…",
+   a:["Documento no guardado.","Documento protegido.","Documento ilegible.","Documento eliminado."], c:0,
+   e:"Equivalencia del tema."},
+
+  {q:"En la tabla, ‘Reboot’ equivale a…",
+   a:["Reiniciar.","Comenzar.","Lista de varias columnas.","Toma el lugar de…"], c:0,
+   e:"Equivalencia del tema."},
+
+  {q:"En la tabla, ‘Mouse-up’ equivale a…",
+   a:["Click.","Override.","Cursor.","String length."], c:0,
+   e:"Equivalencia del tema."},
+
+  {q:"En la tabla, ‘String length’ equivale a…",
+   a:["Número de caracteres.","Texto.","Comienzo.","Botón/checkbox/slider/menu."], c:0,
+   e:"Equivalencia del tema."},
+];
+
+/* ========= ESTADO ========= */
+let session = [];
+let idx = 0;
+let answers = [];
+let fixedOrder = false;
+
+/* ========= DOM ========= */
+const setupEl = document.getElementById("setup");
+const quizEl = document.getElementById("quiz");
+const resultsEl = document.getElementById("results");
+const nqEl = document.getElementById("nq");
+const seedEl = document.getElementById("seed");
+
+const qmetaEl = document.getElementById("qmeta");
+const scoreLiveEl = document.getElementById("scoreLive");
+const qtextEl = document.getElementById("qtext");
+const optsEl = document.getElementById("opts");
+const feedbackEl = document.getElementById("feedback");
+
+const finalLineEl = document.getElementById("finalLine");
+const reviewEl = document.getElementById("review");
+
+/* ========= LÓGICA ========= */
+function buildSession(n){
+  const N = clamp(parseInt(n,10) || 20, 1, BANK.length);
+  fixedOrder = (seedEl.value === "fixed");
+
+  let pool = BANK.map((q, i) => ({...q, _id:i}));
+  pool = fixedOrder ? pool : shuffle(pool);
+  const picked = pool.slice(0, N);
+
+  session = picked.map(item => {
+    const options = item.a.map((txt, i) => ({txt, origIndex:i}));
+    const mixed = fixedOrder ? options : shuffle(options);
+    const newCorrect = mixed.findIndex(o => o.origIndex === item.c);
+    return {
+      id: item._id,
+      q: item.q,
+      opts: mixed.map(o => o.txt),
+      correct: newCorrect,
+      explain: item.e
+    };
+  });
+
+  answers = session.map(_ => ({
+    sel: null,
+    graded: false,
+    isBlank: true,
+    isCorrect: false,
+    points: 0
+  }));
+
+  idx = 0;
+}
+
+function renderQuestion(){
+  const total = session.length;
+  const item = session[idx];
+
+  qmetaEl.textContent = `Pregunta ${idx+1}/${total}`;
+  qtextEl.textContent = item.q;
+
+  optsEl.innerHTML = "";
+  const name = `q_${idx}`;
+
+  item.opts.forEach((txt, i) => {
+    const lab = document.createElement("label");
+    lab.className = "opt";
+    lab.innerHTML = `
+      <input type="radio" name="${name}" value="${i}" />
+      <div class="txt"><b>${String.fromCharCode(65+i)})</b> ${escapeHtml(txt)}</div>
+    `;
+    optsEl.appendChild(lab);
+  });
+
+  // restaurar selección
+  if(answers[idx].sel !== null){
+    const r = optsEl.querySelector(`input[value="${answers[idx].sel}"]`);
+    if(r) r.checked = true;
+  }
+
+  feedbackEl.style.display = "none";
+  feedbackEl.className = "feedback";
+
+  document.getElementById("btnPrev").disabled = (idx === 0);
+  document.getElementById("btnNext").disabled = (idx === total-1);
+
+  updateLiveScore();
+}
+
+function saveSelectionFromUI(){
+  const checked = optsEl.querySelector('input[type="radio"]:checked');
+  if(checked){
+    answers[idx].sel = parseInt(checked.value,10);
+    answers[idx].isBlank = false;
+  }else{
+    answers[idx].sel = null;
+    answers[idx].isBlank = true;
+  }
+}
+
+function showFeedback(kind, title, html){
+  feedbackEl.style.display = "block";
+  feedbackEl.className = `feedback ${kind}`;
+  feedbackEl.innerHTML = `<b>${title}</b><div class="small" style="margin-top:4px">${html}</div>`;
+}
+
+function gradeCurrent(forceBlank){
+  if(forceBlank){
+    answers[idx].sel = null;
+    answers[idx].isBlank = true;
+  }else{
+    saveSelectionFromUI();
+  }
+
+  const item = session[idx];
+  const a = answers[idx];
+
+  if(a.isBlank){
+    a.graded = true;
+    a.isCorrect = false;
+    a.points = 0;
+    showFeedback("warn", "En blanco", `No suma ni resta. Correcta: <b>${String.fromCharCode(65+item.correct)})</b> ${escapeHtml(item.opts[item.correct])}`);
+  }else{
+    a.graded = true;
+    a.isCorrect = (a.sel === item.correct);
+    a.points = a.isCorrect ? 1 : (-1/3);
+    showFeedback(a.isCorrect ? "ok" : "bad",
+      a.isCorrect ? "Correcta ✅" : "Incorrecta ❌",
+      `Correcta: <b>${String.fromCharCode(65+item.correct)})</b> ${escapeHtml(item.opts[item.correct])}<br/><span class="small">${escapeHtml(item.explain || "")}</span>`
+    );
+  }
+
+  updateLiveScore();
+}
+
+function computeScore(){
+  let ok=0, bad=0, blank=0, points=0;
+  answers.forEach(a=>{
+    if(a.isBlank){ blank++; }
+    else if(a.isCorrect){ ok++; }
+    else { bad++; }
+    points += a.points;
+  });
+  return {ok,bad,blank,points};
+}
+
+function updateLiveScore(){
+  const s = computeScore();
+  scoreLiveEl.textContent = `Aciertos: ${s.ok} · Fallos: ${s.bad} · En blanco: ${s.blank} · Nota: ${fmt(s.points)}`;
+}
+
+function finish(){
+  const s = computeScore();
+  quizEl.style.display = "none";
+  resultsEl.style.display = "block";
+  finalLineEl.innerHTML = `
+    <span class="okText">Aciertos:</span> ${s.ok} ·
+    <span class="badText">Fallos:</span> ${s.bad} ·
+    <span class="warnText">En blanco:</span> ${s.blank} ·
+    <b>Nota final:</b> ${fmt(s.points)}
+    <span class="tag">+1 / −0.33 / 0</span>
+  `;
+
+  reviewEl.innerHTML = "";
+  session.forEach((item, i) => {
+    const a = answers[i];
+    const status = a.isBlank ? "En blanco" : (a.isCorrect ? "Correcta" : "Incorrecta");
+    const statusClass = a.isBlank ? "warnText" : (a.isCorrect ? "okText" : "badText");
+    const selTxt = a.isBlank ? "—" : `${String.fromCharCode(65+a.sel)}) ${item.opts[a.sel]}`;
+    const corTxt = `${String.fromCharCode(65+item.correct)}) ${item.opts[item.correct]}`;
+
+    const det = document.createElement("details");
+    det.className = "reviewItem";
+    det.innerHTML = `
+      <summary>Pregunta ${i+1}: <span class="${statusClass}">${status}</span> <span class="tag">${fmt(a.points)} pts</span></summary>
+      <div class="ans"><b>Enunciado:</b> ${escapeHtml(item.q)}</div>
+      <div class="ans"><b>Tu respuesta:</b> ${escapeHtml(selTxt)}</div>
+      <div class="ans"><b>Correcta:</b> ${escapeHtml(corTxt)}</div>
+      ${item.explain ? `<div class="ans small"><b>Nota:</b> ${escapeHtml(item.explain)}</div>` : ``}
+    `;
+    reviewEl.appendChild(det);
+  });
+}
+
+function hardReset(){
+  resultsEl.style.display = "none";
+  quizEl.style.display = "none";
+  setupEl.style.display = "block";
+  feedbackEl.style.display = "none";
+}
+
+/* ========= EVENTOS (solo click, sin duplicados) ========= */
+onClick("btnStart", ()=>{
+  const n = clamp(parseInt(nqEl.value,10) || 20, 1, BANK.length);
+  nqEl.value = n;
+  buildSession(n);
+  setupEl.style.display = "none";
+  resultsEl.style.display = "none";
+  quizEl.style.display = "block";
+  renderQuestion();
+});
+
+onClick("btnPrev", ()=>{
+  saveSelectionFromUI();
+  if(idx>0){ idx--; renderQuestion(); }
+});
+onClick("btnNext", ()=>{
+  saveSelectionFromUI();
+  if(idx<session.length-1){ idx++; renderQuestion(); }
+});
+
+onClick("btnConfirm", ()=> gradeCurrent(false));
+onClick("btnSkip", ()=> gradeCurrent(true));
+onClick("btnFinish", finish);
+
+onClick("btnExpandAll", ()=> document.querySelectorAll("details.reviewItem").forEach(d=> d.open = true));
+onClick("btnCollapseAll", ()=> document.querySelectorAll("details.reviewItem").forEach(d=> d.open = false));
+onClick("btnBackToSetup", hardReset);
+</script>
+</body>
+</html>
