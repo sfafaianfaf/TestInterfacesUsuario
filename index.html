@@ -29,35 +29,20 @@
       padding:24px 16px;
     }
 
-    .wrap{
-      max-width:820px;
-      width:100%;
-    }
+    .wrap{max-width:820px; width:100%;}
 
     .card{
       border:1px solid var(--border);
-      background: linear-gradient(
-        180deg,
-        rgba(18,26,43,.92),
-        rgba(18,26,43,.7)
-      );
+      background: linear-gradient(180deg, rgba(18,26,43,.92), rgba(18,26,43,.7));
       border-radius:18px;
       padding:18px;
       box-shadow: 0 10px 30px rgba(0,0,0,.25);
     }
 
-    h1{
-      margin:0 0 6px;
-      font-size:20px;
-    }
+    h1{margin:0 0 6px; font-size:20px}
 
-    .sub{
-      color:var(--muted);
-      font-size:13px;
-      margin-bottom:14px;
-    }
+    .sub{color:var(--muted); font-size:13px; margin-bottom:14px;}
 
-    /* 🔥 GRID BLINDADO */
     .grid{
       display:grid;
       grid-template-columns: repeat(2, 1fr);
@@ -66,16 +51,14 @@
     }
 
     @media (max-width:640px){
-      .grid{
-        grid-template-columns:1fr;
-      }
+      .grid{grid-template-columns:1fr;}
     }
 
-    a{
-      display:flex;                 /* 🔥 evita colapsos */
+    .grid a{
+      display:flex;
       flex-direction:column;
       justify-content:center;
-      min-height:80px;              /* 🔥 clave para que SIEMPRE se vea */
+      min-height:80px;
       text-decoration:none;
       color:var(--text);
       border:1px solid var(--border);
@@ -83,15 +66,12 @@
       padding:14px;
       border-radius:14px;
       font-weight:800;
-      transition:
-        transform .06s ease,
-        border-color .15s ease,
-        background .15s ease;
+      transition: transform .06s ease, border-color .15s ease, background .15s ease;
       touch-action: manipulation;
       -webkit-tap-highlight-color: transparent;
     }
 
-    a:hover{
+    .grid a:hover{
       transform: translateY(-1px);
       border-color: rgba(110,168,254,.55);
       background: rgba(110,168,254,.10);
@@ -105,11 +85,7 @@
       font-size:12px;
     }
 
-    .hint{
-      margin-top:12px;
-      color:var(--muted);
-      font-size:12px;
-    }
+    .hint{margin-top:12px; color:var(--muted); font-size:12px;}
 
     code{
       background: rgba(0,0,0,.25);
@@ -134,44 +110,38 @@
           📘 Tema 1 — Introducción IPO
           <span class="meta">Banco 50 · aleatorio</span>
         </a>
-            <a href="test_tema2_ipo.html">
+
+        <a href="test_tema2_ipo.html">
           📘 Tema 2 — Dispositivos de interacción
           <span class="meta">Banco 50 · aleatorio</span>
         </a>
-      </div>
 
-          <a href="test_tema3_ipo.html">
+        <a href="test_tema3_ipo.html">
           📘 Tema 3 — Guías de estilo y diseño
           <span class="meta">Banco 50 · aleatorio</span>
         </a>
-      </div>
 
         <a href="test_tema4_ipo.html">
-          📘 Tema 4 — internacionalización y Localización
+          📘 Tema 4 — Internacionalización y localización
           <span class="meta">Banco 50 · aleatorio</span>
         </a>
-      </div>
 
-      <a href="test_tema5_ipo.html">
+        <a href="test_tema5_ipo.html">
           📘 Tema 5 — Interfaces de escritorio
           <span class="meta">Banco 50 · aleatorio</span>
         </a>
-      </div>
+
         <a href="test_tema6_ipo.html">
           📗 Tema 6 — Interfaces Web
           <span class="meta">Banco 100 · aleatorio</span>
         </a>
-
-    
+      </div>
 
       <div class="hint">
         Si te da 404, revisa que el nombre del archivo coincide EXACTO
-        (mayúsculas/minúsculas).
-        Ej: <code>test_tema3_ipo.html</code>
+        (mayúsculas/minúsculas). Ej: <code>test_tema3_ipo.html</code>
       </div>
     </div>
   </div>
 </body>
 </html>
-
-
