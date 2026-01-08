@@ -1,0 +1,1167 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tema 6 · Interfaces Web (Parte 1+2) — Banco 100</title>
+  <style>
+    :root{
+      --bg:#0b1220; --card:#121a2b; --muted:#9aa4b2; --text:#e7eefc;
+      --accent:#6ea8fe; --ok:#22c55e; --bad:#ef4444; --warn:#f59e0b; --border:#24304a;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      background: radial-gradient(1200px 600px at 20% 0%, #132044 0%, var(--bg) 60%);
+      color:var(--text); line-height:1.35;
+    }
+    .wrap{max-width:980px; margin:0 auto; padding:24px 16px 48px;}
+    header{display:flex; justify-content:space-between; gap:12px; align-items:flex-end; flex-wrap:wrap; margin-bottom:14px;}
+    h1{font-size:20px; margin:0; letter-spacing:.2px;}
+    .sub{color:var(--muted); font-size:13px; margin-top:6px;}
+    .pill{
+      display:inline-flex; gap:10px; align-items:center;
+      padding:8px 12px; border:1px solid var(--border);
+      border-radius:999px; background: rgba(18,26,43,.7);
+      color:var(--muted); font-size:13px;
+    }
+    .card{
+      border:1px solid var(--border);
+      background: linear-gradient(180deg, rgba(18,26,43,.92), rgba(18,26,43,.7));
+      border-radius:16px; padding:18px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.25);
+    }
+    .row{display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;}
+    .progress{width:100%; height:10px; border-radius:999px; background:#0e1628; border:1px solid var(--border); overflow:hidden; margin-top:10px;}
+    .bar{height:100%; width:0%; background: linear-gradient(90deg, var(--accent), #8b5cf6); border-radius:999px; transition: width .25s ease;}
+    .q{font-size:18px; margin:14px 0 10px;}
+    .topic{color:var(--muted); font-size:13px;}
+    .opts{display:grid; gap:10px; margin-top:8px;}
+    label.opt{
+      display:flex; gap:10px; align-items:flex-start;
+      padding:12px; border-radius:12px;
+      border:1px solid var(--border); background: rgba(11,18,32,.45);
+      cursor:pointer;
+      transition: transform .06s ease, border-color .15s ease, background .15s ease;
+    }
+    label.opt:hover{transform: translateY(-1px); border-color: rgba(110,168,254,.55); background: rgba(110,168,254,.08);}
+    input[type="radio"]{margin-top:3px; accent-color: var(--accent); transform: scale(1.05);}
+    .actions{display:flex; gap:10px; flex-wrap:wrap; margin-top:14px;}
+    button{
+      border:1px solid var(--border); background: rgba(11,18,32,.55);
+      color:var(--text); padding:10px 12px; border-radius:12px;
+      cursor:pointer; font-weight:700; letter-spacing:.2px;
+      transition: background .15s ease, transform .06s ease, border-color .15s ease;
+    }
+    button:hover{transform: translateY(-1px); border-color: rgba(110,168,254,.55); background: rgba(110,168,254,.10);}
+    button.primary{border-color: rgba(110,168,254,.7); background: rgba(110,168,254,.16);}
+    button.danger{border-color: rgba(239,68,68,.65); background: rgba(239,68,68,.10);}
+    button.ok{border-color: rgba(34,197,94,.65); background: rgba(34,197,94,.10);}
+    button:disabled{opacity:.45; cursor:not-allowed; transform:none;}
+    .feedback{
+      margin-top:12px; padding:12px; border-radius:12px;
+      border:1px solid var(--border); background: rgba(11,18,32,.45);
+      display:none;
+    }
+    .feedback.ok{border-color: rgba(34,197,94,.55); background: rgba(34,197,94,.10)}
+    .feedback.bad{border-color: rgba(239,68,68,.55); background: rgba(239,68,68,.10)}
+    .feedback.warn{border-color: rgba(245,158,11,.55); background: rgba(245,158,11,.10)}
+    .small{color:var(--muted); font-size:13px; margin-top:8px;}
+    .setup{display:block;}
+    .quiz{display:none;}
+    .summary{display:none; margin-top:14px;}
+    .grid{display:grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap:10px; margin-top:12px;}
+    .kpi{padding:12px; border-radius:14px; border:1px solid var(--border); background: rgba(11,18,32,.45);}
+    .kpi .n{font-size:22px; font-weight:900; margin-bottom:4px}
+    .kpi .t{color:var(--muted); font-size:13px}
+    @media (max-width:740px){ .grid{grid-template-columns: repeat(2, minmax(0,1fr));} }
+    .review{margin-top:14px;}
+    details.reviewItem{
+      border:1px solid var(--border); border-radius:14px; background: rgba(11,18,32,.35);
+      padding:10px 12px; margin:10px 0;
+    }
+    details.reviewItem summary{cursor:pointer; font-weight:800;}
+    .tag{display:inline-block; padding:2px 8px; border:1px solid var(--border); border-radius:999px; color:var(--muted); font-size:12px; margin-left:8px;}
+    .ansLine{margin-top:8px; color:var(--muted);}
+    .ansLine b{color:var(--text);}
+    .correct{color: var(--ok); font-weight:800;}
+    .incorrect{color: var(--bad); font-weight:800;}
+    .blank{color: var(--warn); font-weight:800;}
+    .divider{height:1px; background: rgba(36,48,74,.8); margin:12px 0;}
+    input[type="number"]{
+      width:120px; padding:10px 12px; border-radius:12px; border:1px solid var(--border);
+      background: rgba(11,18,32,.55); color: var(--text); font-weight:800;
+      outline:none;
+    }
+    select{
+      padding:10px 12px; border-radius:12px; border:1px solid var(--border);
+      background: rgba(11,18,32,.55); color: var(--text); font-weight:700;
+      outline:none;
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Tema 6 · Interfaces Web — Banco 100 (Parte 1 + Parte 2)</h1>
+      <div class="sub">Puntuación: +1 correcta · −1/3 incorrecta · 0 en blanco. Puedes navegar (Anterior/Siguiente) y confirmar cuando quieras.</div>
+    </div>
+    <div class="pill" id="statusPill">Preg. <b id="qNum">0</b>/<span id="qTotal">0</span> · Nota: <b id="scoreNow">0.00</b></div>
+  </header>
+
+  <div class="card">
+    <!-- SETUP -->
+    <div class="setup" id="setup">
+      <div class="row">
+        <div>
+          <div style="font-size:16px; font-weight:900;">Configura tu test</div>
+          <div class="small">Elige cuántas preguntas quieres hacer. Se seleccionan aleatoriamente de un banco de 100 y se barajan las opciones para que la correcta no “caiga siempre” en A/B.</div>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="row" style="align-items:flex-end;">
+        <div>
+          <div class="small" style="margin:0 0 6px;">Número de preguntas (N)</div>
+          <input type="number" id="numQuestions" min="5" max="100" value="30" />
+          <div class="small">Rango recomendado: 20–40 para repasar rápido.</div>
+        </div>
+        <div>
+          <div class="small" style="margin:0 0 6px;">Modo</div>
+          <select id="modeSelect">
+            <option value="instant">Feedback al confirmar (recomendado)</option>
+            <option value="exam">Modo examen (sin feedback hasta el final)</option>
+          </select>
+          <div class="small">En modo examen: confirmas, puntúa, pero no te digo si está bien hasta el final.</div>
+        </div>
+        <div class="actions" style="margin-top:0;">
+          <button class="primary" id="btnStart">Empezar</button>
+          <button class="danger" id="btnHardReset">Reset total</button>
+        </div>
+      </div>
+      <div class="small" id="setupNote"></div>
+    </div>
+
+    <!-- QUIZ -->
+    <div class="quiz" id="quiz">
+      <div class="row">
+        <div class="topic" id="topicTag"></div>
+        <div class="topic">
+          Confirmadas: <b id="doneCount">0</b> · Correctas: <b id="okCount">0</b> · Incorrectas: <b id="badCount">0</b> · En blanco: <b id="blankCount">0</b>
+        </div>
+      </div>
+
+      <div class="progress" aria-label="Progreso">
+        <div class="bar" id="bar"></div>
+      </div>
+
+      <div class="q" id="questionText"></div>
+      <div class="opts" id="options"></div>
+
+      <div class="actions">
+        <button id="btnPrev">⬅️ Anterior</button>
+        <button id="btnNext">Siguiente ➡️</button>
+        <button class="ok" id="btnConfirm">Confirmar / Puntuar</button>
+        <button id="btnSkip">Dejar en blanco</button>
+        <button class="danger" id="btnFinish">Finalizar test</button>
+      </div>
+
+      <div class="feedback" id="feedbackBox"></div>
+      <div class="small" id="hintText"></div>
+
+      <!-- SUMMARY -->
+      <div class="summary" id="summary">
+        <h2 style="margin:14px 0 8px; font-size:18px;">Resultado final</h2>
+        <div class="grid">
+          <div class="kpi"><div class="n" id="finalScore">0.00</div><div class="t">Nota (con penalización 1/3)</div></div>
+          <div class="kpi"><div class="n" id="finalOk">0</div><div class="t">Correctas</div></div>
+          <div class="kpi"><div class="n" id="finalBad">0</div><div class="t">Incorrectas</div></div>
+          <div class="kpi"><div class="n" id="finalBlank">0</div><div class="t">En blanco</div></div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="row">
+          <div style="font-weight:900;">Revisión pregunta por pregunta</div>
+          <div class="actions" style="margin-top:0;">
+            <button id="btnExpandAll">Expandir todo</button>
+            <button id="btnCollapseAll">Contraer todo</button>
+            <button class="primary" id="btnBackToSetup">Hacer otro test</button>
+          </div>
+        </div>
+
+        <div class="review" id="reviewList"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // --- Utilidades
+  const NEG = 1/3;
+  const ABCD = (i) => String.fromCharCode(65+i);
+  function fmt(n){ return (Math.round(n*100)/100).toFixed(2); }
+  function shuffle(arr){
+    for(let i=arr.length-1;i>0;i--){
+      const j = Math.floor(Math.random()*(i+1));
+      [arr[i],arr[j]] = [arr[j],arr[i]];
+    }
+    return arr;
+  }
+
+  // --- Banco de preguntas (100) basado en Tema 6 Parte 1 y Parte 2
+  // Nota: cada pregunta lleva opciones + respuesta correcta + explicación corta.
+  // Las opciones se barajan al montar el test, para evitar sesgo A/B.
+  const BANK = [
+    // ===== Parte 1 (web, estándares, tecnologías, accesibilidad, metadatos, color, tablas) =====
+    {topic:"Web · Conceptos", q:"Una aplicación web se caracteriza por:", options:[
+      "Tener siempre base de datos y servidor dedicado.",
+      "Construir su interfaz utilizando páginas web (HTML).",
+      "Ejecutarse sólo en dispositivos móviles.",
+      "No usar hipervínculos nunca."
+    ], a:1, exp:"En el tema: la interfaz se construye con páginas web (HTML) y enlaces."},
+
+    {topic:"Web · Hipertexto", q:"El término “hipertexto” fue acuñado por:", options:[
+      "Tim Berners-Lee", "Vannevar Bush", "Ted Nelson", "Maximilien Vox"
+    ], a:2, exp:"Ted Nelson (1965)."},
+    {topic:"Web · Orígenes", q:"El sistema Memex (“As we may think”, 1945) se asocia a:", options:[
+      "Vannevar Bush", "Ted Nelson", "Eloy Alarcón", "J.J. Garret"
+    ], a:0, exp:"Memex es de Vannevar Bush."},
+    {topic:"Web · W3C", q:"El W3C es un organismo que:", options:[
+      "Define estándares web y nace en 1994 (MIT).",
+      "Sólo produce navegadores.",
+      "Es un lenguaje de marcado para hipertexto.",
+      "Es un protocolo de transferencia."
+    ], a:0, exp:"W3C fija estándares web desde 1994 (MIT)."},
+    {topic:"Web · HTML", q:"HTML (según el tema) se define como:", options:[
+      "Un protocolo de solicitud-respuesta.",
+      "Un lenguaje de marcado para publicar hipertexto en la Web con etiquetas que estructuran texto.",
+      "Un motor de bases de datos.",
+      "Un sistema operativo para servidores web."
+    ], a:1, exp:"Lenguaje de marcado para hipertexto con etiquetas."},
+    {topic:"Web · HTTP", q:"HTTP (según el tema) es:", options:[
+      "Un lenguaje de marcado.", "Un protocolo de transferencia de datos basado en solicitud/respuesta.",
+      "Un estándar tipográfico.", "Un plugin del navegador."
+    ], a:1, exp:"Protocolo de transferencia basado en request/response."},
+    {topic:"Estándares", q:"Un beneficio de los estándares abiertos para el mercado es:", options:[
+      "Reducen innovación y competencia.",
+      "Aumentan innovación y competencia.",
+      "Obligan a soluciones propietarias.",
+      "Impiden la interoperabilidad."
+    ], a:1, exp:"Abiertos → innovación y competencia; confianza del mercado."},
+    {topic:"Estándares", q:"Según el tema, un estándar del W3C tiende a ser:", options:[
+      "Caro y con licencias restrictivas.",
+      "Abierto y gratuito (texto accesible, tecnología sin royalties).",
+      "Sólo válido para un navegador.",
+      "Propiedad de un único fabricante."
+    ], a:1, exp:"Abiertos y gratuitos, libres de derechos."},
+
+    {topic:"Evolución Web", q:"La evolución descrita pasa de Web 1.0 (documentos) hacia:", options:[
+      "Sólo web local sin datos.",
+      "Web única (para todo el mundo, desde cualquier dispositivo) y web 2.0/3.0…",
+      "Sólo web de escritorio.",
+      "Sólo web de documentos estáticos."
+    ], a:1, exp:"Web única: universal, multi-dispositivo, creadores/consumidores, datos/servicios."},
+
+    {topic:"Web dinámica", q:"Una opción de web dinámica en el cliente, según el tema, es:", options:[
+      "CGI", "JavaScript", "Servlets", "ASP en servidor"
+    ], a:1, exp:"HTML dinámico + JavaScript (cliente)."},
+    {topic:"Servidor · CGI", q:"CGI se describe como:", options:[
+      "Un estándar tipográfico.", "Una aplicación web que recibe parámetros según Common Gateway Interface.",
+      "Un lenguaje de marcado.", "Un plugin para vídeo."
+    ], a:1, exp:"CGI: estándar de comunicación app-servidor web."},
+    {topic:"Servidor · Servlets", q:"Un servlet es:", options:[
+      "Un applet Java en el navegador.",
+      "Un programa Java que se ejecuta en el servidor, extendiendo el comportamiento del servidor web.",
+      "Un archivo CSS.",
+      "Un tipo de fuente tipográfica."
+    ], a:1, exp:"Servlet: Java en servidor, análogo a CGI."},
+    {topic:"Páginas de servidor", q:"En el tema se citan como páginas de servidor:", options:[
+      "ASP y JSP", "HTTP y HTML", "W3C y MIT", "Alt y longdesc"
+    ], a:0, exp:"Ejemplos: ASP y JSP (y ASP.NET)."},
+    {topic:"HTML · Etiquetas", q:"Se menciona que existen etiquetas HTML:", options:[
+      "Obligatorias sólo en móviles.",
+      "Desaconsejadas (deprecadas) en HTML.",
+      "Que sustituyen a CSS siempre.",
+      "Que eliminan necesidad de doctype."
+    ], a:1, exp:"Hay “etiquetas desaconsejadas” (mejor CSS/semántica)."},
+    {topic:"CSS", q:"Una ventaja para el usuario de diseñar con CSS es:", options:[
+      "Páginas más livianas y mejor accesibilidad/usabilidad.",
+      "Obligar a IE 800x600.",
+      "Eliminar la necesidad de texto.",
+      "Hacer que el site dependa de un plugin."
+    ], a:0, exp:"Ventajas para usuario: livianas, accesibilidad, usabilidad, estilos impresión/móviles."},
+    {topic:"CSS", q:"Una ventaja para la organización al usar CSS es:", options:[
+      "Peor posicionamiento en buscadores.",
+      "Ahorro de transferencia y mejor posicionamiento en buscadores.",
+      "Más dependencia de tablas.",
+      "Menor compatibilidad futura."
+    ], a:1, exp:"Organización: ahorro transferencia, mantenimiento, compatibilidad futura, SEO."},
+    {topic:"Herramientas", q:"Firebug se menciona como herramienta para:", options:[
+      "Entender el código (y más).",
+      "Hacer pruebas de daltonismo.",
+      "Crear metadatos de música.",
+      "Traducir automáticamente webs."
+    ], a:0, exp:"Firebug: para entender el código."},
+    {topic:"Validación", q:"El “Validator” se menciona para:", options:[
+      "Validación al instante del código.",
+      "Cambiar tipografías a Garamond.",
+      "Convertir Flash a HTML.",
+      "Generar títulos SERP."
+    ], a:0, exp:"Validador: validación al instante."},
+
+    // Accesibilidad imágenes
+    {topic:"Accesibilidad · Imágenes", q:"Las imágenes deben tener un texto equivalente usando:", options:[
+      "href y rel", "alt y longdesc", "meta y title", "param y object"
+    ], a:1, exp:"Alt/longdesc para equivalente textual."},
+    {topic:"Accesibilidad · Imágenes", q:"Para imágenes sencillas, la recomendación es:", options:[
+      "Una descripción breve.", "Una transcripción larga siempre.", "No usar alt.", "Sólo longdesc."
+    ], a:0, exp:"Para imágenes sencillas → descripción breve en alt."},
+    {topic:"Accesibilidad · Imágenes", q:"Recomendación del tema al escribir <img>:", options:[
+      "Cerrar como etiqueta vacía <img ... />.",
+      "Cerrar con </img>.",
+      "No cerrar nunca.",
+      "Cerrar sólo si tiene longdesc."
+    ], a:0, exp:"Se muestra “Bien”: <img ... />."},
+    {topic:"Accesibilidad · Decorativas", q:"Para una imagen decorativa, alt nulo (alt=\"\") sirve para:", options:[
+      "Que el lector de pantalla “salte” la imagen.",
+      "Que lea “imagen decorativa”.",
+      "Que la imagen cargue más rápido.",
+      "Que el navegador traduzca el texto."
+    ], a:0, exp:"Alt nulo → el lector la salta."},
+    {topic:"Multimedia", q:"Caso Gerardo (tarjeta de sonido dañada): solución adecuada:", options:[
+      "Arreglarle la tarjeta siempre.",
+      "Poner subtítulos y un resumen del contenido importante.",
+      "Quitar el vídeo de la web.",
+      "Pasar el vídeo a Flash."
+    ], a:1, exp:"Accesibilidad: subtítulos + resumen."},
+    {topic:"Audio", q:"Caso Julia en biblioteca sin audio: la solución propuesta es:", options:[
+      "Prestarle audífonos.",
+      "Que se vaya a casa.",
+      "Transcribir el audio en la misma página.",
+      "No usar podcasts nunca."
+    ], a:2, exp:"Diapositiva: “¡Transcribe el audio!”"},
+    {topic:"Flash y lectores", q:"Caso Santiago usa Jaws y el mapa está en Flash: se recomienda:", options:[
+      "Que alguien use el ratón por él.",
+      "Contenido alternativo textual con hipervínculos redundantes.",
+      "Esperar a una versión futura de Jaws.",
+      "Obligarle a instalar un plugin extra."
+    ], a:1, exp:"Contenido alternativo + enlaces redundantes."},
+    {topic:"Contenido alternativo", q:"El contenido alternativo para <object> se coloca:", options:[
+      "Dentro de <object> como fallback (p. ej., un <p>).",
+      "En <meta name=\"description\">.",
+      "En un atributo alt del object.",
+      "En el doctype."
+    ], a:0, exp:"Ejemplo del tema: <object>...<p>alternativo</p></object>."},
+
+    // Lenguaje / metadatos / title
+    {topic:"Lenguaje Web", q:"Escribir para la Web implica considerar:", options:[
+      "Sólo el tamaño de imágenes.",
+      "Titulación, marcado estructural y metadatos.",
+      "Evitar encabezados.",
+      "No usar listas."
+    ], a:1, exp:"El tema resalta titulación, estructura y metadatos."},
+    {topic:"Idioma principal", q:"Para identificar idioma principal en HTML, se usa:", options:[
+      "alt", "lang (y xml:lang según caso)", "href", "charset como idioma"
+    ], a:1, exp:"Métodos: lang/xml:lang, cabecera HTTP, Content-Language."},
+    {topic:"Audiencia global", q:"Caso Joao (brasileño) y blog en español: recomendación:", options:[
+      "Jerga y costumbrismos para sonar auténtico.",
+      "Traducción y español más universal/sencillo.",
+      "Bloquear accesos desde Brasil.",
+      "Todo en Flash."
+    ], a:1, exp:"Evitar jerga/costumbrismos; considerar traducciones."},
+    {topic:"Lenguaje claro", q:"Una práctica recomendada de lenguaje claro es:", options:[
+      "Ubicar la idea principal al inicio.",
+      "Poner la idea principal al final.",
+      "Evitar listas.",
+      "Usar vocabulario técnico siempre."
+    ], a:0, exp:"Se recomienda idea principal al inicio, listas, destacar, etc."},
+    {topic:"Metadatos", q:"Metadatos se definen como:", options:[
+      "Datos sobre los datos.", "Datos inútiles.", "Sólo palabras clave.", "Sólo títulos."
+    ], a:0, exp:"Definición literal del tema."},
+    {topic:"META description", q:"<meta name=\"description\"> sirve para:", options:[
+      "Autor", "Sumario/resumen", "Robots", "Idioma principal"
+    ], a:1, exp:"Description: sumario o resumen."},
+    {topic:"META keyword", q:"<meta name=\"keyword(s)\"> sirve para:", options:[
+      "Indicar palabras clave.", "Definir tipografía.", "Cerrar etiquetas.", "Traducir la web."
+    ], a:0, exp:"Keyword: palabras clave del documento."},
+    {topic:"META robots", q:"Robots se usa para indicar a buscadores:", options:[
+      "Cómo indexar/seguir enlaces.", "Qué fuente usar.", "Qué color aplicar.", "Qué audio reproducir."
+    ], a:0, exp:"Indexar/no indexar, seguir/no seguir enlaces, etc."},
+    {topic:"<title>", q:"La etiqueta <title> es clave porque aparece en:", options:[
+      "Sólo dentro del body.", "Pestaña/ventana, historial, favoritos y SERP.", "Sólo en CSS.", "Sólo en imágenes."
+    ], a:1, exp:"Se muestra pestaña, historial, favoritos, SERP, etc."},
+    {topic:"<title> buenas prácticas", q:"Consejo correcto para titular páginas:", options:[
+      "Un mismo title para todas.", "Títulos diferentes, breves, claros, con nombre del portal y coherentes con contenido.",
+      "Títulos larguísimos con todo el texto.", "Evitar el nombre del portal siempre."
+    ], a:1, exp:"Lista de consejos del tema."},
+
+    // Ortografía / color / tablas
+    {topic:"Ortografía", q:"El ejemplo del “Testamento de Facundo” ilustra que:", options:[
+      "La puntuación no importa.", "La puntuación cambia el significado y la interpretación.", "Hay que evitar comas.", "Hay que escribir sin acentos."
+    ], a:1, exp:"La misma frase cambia según puntuación."},
+    {topic:"Color", q:"El tema menciona aproximadamente un:", options:[
+      "1% daltónicos", "3% daltónicos", "8% daltónicos", "20% daltónicos"
+    ], a:2, exp:"Se indica 8%."},
+    {topic:"Color · No depender del color", q:"Caso Kristopher (formulario/calendario): solución:", options:[
+      "Transmitir info además del color con marcadores/variaciones tipográficas.",
+      "Poner nota: no apto para daltónicos e IE 800x600.",
+      "Hacerlo todo en B/N sin más.",
+      "Quitar el calendario siempre."
+    ], a:0, exp:"Regla: no depender sólo del color."},
+    {topic:"Color · Impresión", q:"Caso Susan imprime en B/N: solución propuesta:", options:[
+      "Cambiar a gráfico de pastel sí o sí.",
+      "Sustituir por tabla siempre.",
+      "Etiquetar cada barra/serie además de la leyenda de color.",
+      "Decirle que imprima en color."
+    ], a:2, exp:"Añadir marcadores/etiquetas además del color."},
+    {topic:"Color · Herramientas", q:"CCA (Colour Contrast Analyser) sirve para:", options:[
+      "Evaluar contraste/legibilidad de colores.", "Validar XHTML", "Clasificar tipografías", "Generar podcasts"
+    ], a:0, exp:"Herramienta de evaluación de contraste."},
+    {topic:"Tablas vs CSS", q:"¿Por qué no es buena idea maquetar con tablas?", options:[
+      "Porque HTML prohíbe tablas.", "Porque afecta semántica/accesibilidad; la maquetación debe hacerse con CSS.",
+      "Porque no funciona en móvil jamás.", "Porque aumenta siempre el tamaño del texto."
+    ], a:1, exp:"Tablas para datos; maquetación con CSS."},
+
+    // ===== Parte 2 (sitio web, Garrett, diseño, composición, tipografía) =====
+    {topic:"Sitio web", q:"Un sitio web se define como:", options:[
+      "Una app móvil sin navegador.",
+      "Una fuente de información adaptada a WWW accesible con navegador, generalmente en HTML y con hiperenlaces.",
+      "Un archivo PDF sin enlaces.",
+      "Un servidor DNS."
+    ], a:1, exp:"Definición de la introducción Parte 2."},
+    {topic:"Partes de un sitio", q:"La “navegación” de un sitio web es:", options:[
+      "El pie legal.", "El área con hipervínculos hacia el contenido.", "El logo de cabecera.", "La base de datos."
+    ], a:1, exp:"Navegación: área con hipervínculos hacia contenido."},
+    {topic:"Partes de un sitio", q:"El “contenido o cuerpo” es:", options:[
+      "Zona principal donde se ubica la información.",
+      "Siempre el menú superior.",
+      "El aviso legal del footer.",
+      "Sólo imágenes decorativas."
+    ], a:0, exp:"Contenido/cuerpo: parte principal de la información."},
+    {topic:"Partes de un sitio", q:"El “pie de página” suele contener:", options:[
+      "Sólo un buscador.",
+      "Información de respaldo: condiciones de uso, avisos legales, etc.",
+      "Siempre un vídeo en autoplay.",
+      "La arquitectura de información completa."
+    ], a:1, exp:"Footer: condiciones de uso, avisos legales, etc."},
+    {topic:"Buen sitio web", q:"Según el tema, un buen sitio web:", options:[
+      "Sólo debe ser bonito.", "Representa la esencia de una organización y genera valor/satisfacción.", "Debe ser siempre Flash.", "Debe evitar resolver dudas."
+    ], a:1, exp:"Lista: esencia, productos/servicios, resuelve dudas, minimiza problemas, etc."},
+
+    {topic:"UX · Garrett", q:"En el modelo de J.J. Garret, la base (estrategia) incluye:", options:[
+      "Diseño visual", "Necesidades del usuario y objetivos del sitio", "Diseño de información", "Diseño de navegación"
+    ], a:1, exp:"Estrategia: necesidades del usuario + objetivos del sitio."},
+    {topic:"UX · Garrett", q:"En el modelo de Garrett, el “esqueleto” incluye:", options:[
+      "Diseño de interacción y arquitectura de la información", "Necesidades del usuario", "Especificaciones funcionales", "Diseño visual"
+    ], a:0, exp:"Esqueleto: diseño de interacción + arquitectura de información (y navegación/interfaz según detalle)."},
+    {topic:"UX · Garrett", q:"En el modelo de Garrett, la “superficie” se corresponde con:", options:[
+      "Diseño visual", "Requisitos de contenido", "Arquitectura de información", "Estrategia"
+    ], a:0, exp:"Superficie: diseño visual."},
+
+    {topic:"Diseño web", q:"El conocimiento del diseño se basa principalmente en:", options:[
+      "Memorizar colores.", "Comprender relaciones espaciales entre componentes.", "Evitar whitespace.", "Usar siempre tablas."
+    ], a:1, exp:"Diseño: comprensión de relaciones espaciales."},
+    {topic:"Diseño web", q:"En el tema, diseño y composición se divide en:", options:[
+      "Análisis y programación", "Descubrimiento e implementación", "Marketing y ventas", "Serif y sans"
+    ], a:1, exp:"Dos tareas: descubrimiento e implementación."},
+    {topic:"Diseño web", q:"“Descubrimiento” en diseño se refiere a:", options:[
+      "Crear el diseño ya con tecnología concreta.",
+      "Recolectar info sobre el usuario y cómo maneja la web (qué y cómo).",
+      "Elegir tipografías decorativas.",
+      "Optimizar el servidor."
+    ], a:1, exp:"Descubrimiento: recolección sobre usuario y uso."},
+    {topic:"Diseño web", q:"“Implementación” en diseño incluye:", options:[
+      "Captar info del usuario y ya.",
+      "Crear el diseño con la info captada, prototipar y no quedar atrapado por una tecnología concreta.",
+      "Sólo escribir el HTML final sin pruebas.",
+      "Usar siempre Flash."
+    ], a:1, exp:"Implementación: crear diseño, prototipado, evitar dependencia tecnológica."},
+    {topic:"Buen diseño", q:"Según el tema, el diseño debe:", options:[
+      "Ser obstáculo para filtrar usuarios.",
+      "Actuar como conducto entre usuario e información (no obstáculo).",
+      "Priorizar animaciones antes que contenido.",
+      "Cambiar radicalmente en cada página."
+    ], a:1, exp:"Diseño como conducto, no obstáculo."},
+    {topic:"Navegación", q:"Se indica que el principal bloque de navegación debe:", options:[
+      "Estar oculto para ganar espacio.",
+      "Ser claramente visible desde la página principal.",
+      "Ser sólo iconos sin texto.",
+      "Aparecer sólo al final del contenido."
+    ], a:1, exp:"Navegación intuitiva: bloque principal visible desde home."},
+    {topic:"Cohesión del site", q:"Los usuarios deben reconocer pertenencia de cada página al sitio. Eso implica:", options:[
+      "Que cada página sea completamente distinta.",
+      "Que exista un factor de cohesión en todo el site, aunque home sea diferente.",
+      "Que no haya logotipo.",
+      "Que todo sea texto plano."
+    ], a:1, exp:"Debe existir cohesión visual/estructural."},
+
+    {topic:"Composición", q:"La “regla de los tercios” deriva de:", options:[
+      "Sección áurea", "W3C", "HTTP", "DIN 16518"
+    ], a:0, exp:"Regla de tercios deriva de la sección áurea."},
+    {topic:"Composición", q:"En la regla de los tercios, los puntos de intersección se llaman:", options:[
+      "Puntos muertos", "Centros de atención", "Vértices tipográficos", "Remates"
+    ], a:1, exp:"Intersecciones → centros de atención."},
+    {topic:"Equilibrio visual", q:"El equilibrio visual simétrico ocurre cuando:", options:[
+      "Los elementos están repartidos desigualmente.",
+      "Los elementos se reflejan/son equivalentes a ambos lados de un eje imaginario.",
+      "No hay eje imaginario.",
+      "Sólo se usa color."
+    ], a:1, exp:"Simétrico: mismos elementos a ambos lados del eje."},
+    {topic:"Equilibrio visual", q:"El equilibrio visual asimétrico ocurre cuando:", options:[
+      "Los elementos se reparten desigualmente alrededor de un eje imaginario.",
+      "Los elementos son idénticos a ambos lados.",
+      "No existen elementos.",
+      "Sólo se usa serif."
+    ], a:0, exp:"Asimétrico: reparto desigual, pero equilibrado."},
+    {topic:"Unidad", q:"La unidad en diseño se consigue con:", options:[
+      "Proximidad y repetición", "Sólo contraste", "Sólo aislamiento", "Sólo tipografía decorativa"
+    ], a:0, exp:"Unidad: proximidad y repetición."},
+    {topic:"Unidad · Proximidad", q:"La proximidad en diseño significa que:", options:[
+      "Separar todo al máximo.",
+      "Colocar objetos próximos crea punto focal hacia el que se desplaza el ojo.",
+      "Sólo usar blanco y negro.",
+      "Evitar agrupaciones."
+    ], a:1, exp:"Proximidad crea relación y foco."},
+    {topic:"Unidad · Repetición", q:"La repetición en diseño ayuda a:", options:[
+      "Unir el diseño como unidad cohesiva repitiendo colores, formas, texturas u objetos similares.",
+      "Hacerlo más caótico.",
+      "Eliminar jerarquía visual.",
+      "Impedir la lectura."
+    ], a:0, exp:"Repetición une el diseño."},
+    {topic:"Énfasis", q:"Según el tema, el énfasis busca captar atención mediante:", options:[
+      "Colocación, continuidad y aislamiento.",
+      "Sólo color rojo.",
+      "Sólo tipografía gótica.",
+      "Sólo animaciones Flash."
+    ], a:0, exp:"Énfasis: colocación, continuidad, aislamiento."},
+    {topic:"Contraste", q:"El contraste aumenta cuando:", options:[
+      "Los elementos son iguales a su entorno.",
+      "Hay mayor diferencia entre un elemento y sus alrededores (color/tamaño/forma).",
+      "Se elimina el espacio en blanco.",
+      "Se usan tablas."
+    ], a:1, exp:"Contraste: diferencia destacada."},
+    {topic:"Espacio en blanco", q:"El espacio en blanco en diseño web:", options:[
+      "Es un desperdicio sin función.",
+      "Es un componente con importancia similar a textos, imágenes y vídeos.",
+      "Sólo sirve en impresión.",
+      "Se recomienda eliminarlo siempre."
+    ], a:1, exp:"Tiene la misma importancia dentro del diseño."},
+
+    // Tipografía: conceptos base
+    {topic:"Tipografía", q:"Una familia tipográfica es:", options:[
+      "Un único carácter aislado.",
+      "Un grupo de signos con rasgos comunes que forman una unidad tipográfica (familia de fuentes).",
+      "Sólo letras mayúsculas.",
+      "Un estándar del W3C."
+    ], a:1, exp:"Familia tipográfica = conjunto con rasgos comunes."},
+    {topic:"Tipografía", q:"La “altura de la x” es:", options:[
+      "Altura de letras de caja baja excluyendo ascendentes y descendentes.",
+      "Altura total de mayúsculas.",
+      "El grosor del trazo.",
+      "La inclinación de la cursiva."
+    ], a:0, exp:"Definición literal: altura de caja baja sin ascend./descend."},
+    {topic:"Tipografía", q:"El “asta” se define como:", options:[
+      "Curva cerrada interna (como en O).",
+      "Rasgo principal de la letra que define su forma esencial.",
+      "Punto exterior de encuentro de trazos.",
+      "Adorno final (serifa)."
+    ], a:1, exp:"Asta: rasgo principal esencial."},
+    {topic:"Tipografía", q:"Los adornos en terminaciones de algunos caracteres se llaman:", options:[
+      "Serifas (serif)", "Alt", "Metadatos", "Param"
+    ], a:0, exp:"Serif o serifas."},
+    {topic:"Tipografía", q:"La tipografía sin esos adornos suele llamarse:", options:[
+      "Garamonda", "Sans serif / palo seco", "Caligráfica", "Incisa romana"
+    ], a:1, exp:"Sanserif/palo seco."},
+    {topic:"Legibilidad", q:"Según el tema, los tipos clásicos latinos suelen ser:", options:[
+      "Los menos legibles.",
+      "Los más legibles (redondas y minúsculas suelen ser más legibles).",
+      "Sólo legibles en titulares.",
+      "Legibles sólo en pantallas pequeñas."
+    ], a:1, exp:"Clásicos latinos: mayor legibilidad."},
+
+    // Clasificaciones tipográficas
+    {topic:"Clasificación", q:"VOX-ATypI es:", options:[
+      "Un protocolo web.",
+      "Una adaptación (1964) de la clasificación de Maximilien Vox realizada por ATYPI.",
+      "Una herramienta de contraste de color.",
+      "Un tipo de etiqueta HTML."
+    ], a:1, exp:"ATYPI adaptó Vox en 1964 → VOX-ATypI."},
+    {topic:"Clasificación", q:"DIN 16518 se menciona como:", options:[
+      "Una normalización de clasificación tipográfica por ATYPI basada en características comunes.",
+      "Un estándar HTTP.",
+      "Un tipo de fuente gótica concreta.",
+      "Una recomendación de SEO."
+    ], a:0, exp:"DIN 16518: clasificación tipográfica normalizada."},
+    {topic:"DIN 16518", q:"En DIN 16518 se muestran grandes grupos como:", options:[
+      "Romanas, Palo seco, Rotuladas, Decorativas.",
+      "HTTP, HTML, CSS, XML.",
+      "Estrategia, alcance, estructura, esqueleto.",
+      "Alt, title, meta, robots."
+    ], a:0, exp:"Los cuatro grandes grupos mostrados."},
+
+    // Romanas subtipos
+    {topic:"Romanas", q:"Las “Garaldas” (por Garamond) aparecen:", options:[
+      "A fines del siglo XVI en Francia.",
+      "En el siglo XXI con la web.",
+      "En la Bauhaus.",
+      "En los años 50."
+    ], a:0, exp:"Garaldas: finales s. XVI, Francia."},
+    {topic:"Romanas", q:"Las “Transición” se sitúan en:", options:[
+      "Siglo XV", "Siglo XVIII", "Siglo XXI", "Siglo XIII"
+    ], a:1, exp:"Transición: siglo XVIII."},
+    {topic:"Romanas", q:"Las “Modernas” (Didot) aparecen:", options:[
+      "Mediados del siglo XVIII", "Finales del XVI", "Siglo XV", "Años 50"
+    ], a:0, exp:"Modernas: mediados del XVIII, Didot."},
+    {topic:"Romanas", q:"Las “Mecanos” se describen como:", options:[
+      "Grupo aislado sin semejanza constructiva con otras romanas, salvo el asiento/remate.",
+      "Las más legibles en texto corrido siempre.",
+      "Sans serif geométricas.",
+      "Caligráficas de invitación."
+    ], a:0, exp:"Mecanos: grupo aislado, sólo comparten asiento."},
+    {topic:"Romanas", q:"Las “Incisas” se caracterizan por:", options:[
+      "Tradición romana antigua; pies abocinados sugieren diminuto serif y pueden parecer palo seco.",
+      "Tener remates enormes decorativos.",
+      "Ser góticas ilegibles.",
+      "Ser sans serif lineales."
+    ], a:0, exp:"Incisas: tradición romana, pies abocinados, a veces parecen palo seco."},
+
+    // Palo seco
+    {topic:"Palo seco", q:"Las fuentes “Palo seco” se caracterizan por:", options:[
+      "Reducir caracteres a esquema esencial; líneas rectas y círculos; industrialización/funcionalismo.",
+      "Tener serifas triangulares.",
+      "Ser siempre manuscritas.",
+      "Ser decorativas de época exclusivamente."
+    ], a:0, exp:"Definición del tema."},
+    {topic:"Palo seco", q:"Dentro de “Palo seco”, las “Lineales” son:", options:[
+      "Trazo uniforme, sin contraste ni modulación; esencia geométrica; mala legibilidad en texto corrido a veces.",
+      "Muy contrastadas con serifas finas.",
+      "Cursivas informales.",
+      "Góticas densas."
+    ], a:0, exp:"Lineales: geométricas, trazo uniforme."},
+    {topic:"Palo seco", q:"Dentro de “Palo seco”, las “Grotescas” se caracterizan por:", options:[
+      "Grosor/contraste poco perceptibles y ser muy legibles en texto corrido.",
+      "Ser las menos legibles siempre.",
+      "Tener remates triangulares.",
+      "Usarse sólo en rótulos de edificios."
+    ], a:0, exp:"Grotescas: legibles en texto corrido; ejemplo Gill Sans."},
+
+    // Rotuladas
+    {topic:"Rotuladas", q:"Las fuentes rotuladas:", options:[
+      "Advierten el instrumento y la mano, tradición caligráfica/cursiva.",
+      "Son siempre geométricas industriales.",
+      "Son sólo para cuerpo de texto largo.",
+      "Son un estándar del W3C."
+    ], a:0, exp:"Rotuladas: huella manual/caligráfica."},
+    {topic:"Rotuladas", q:"Las rotuladas “Góticas” se describen como:", options:[
+      "Estructura densa, composición apretada, verticalidad acentuada e ilegibilidad.",
+      "Trazo uniforme geométrico y muy legible.",
+      "Remates finos y rectos.",
+      "Sólo para invitaciones."
+    ], a:0, exp:"Góticas: densas e ilegibles, manchan la página."},
+    {topic:"Rotuladas", q:"Las rotuladas “Cursivas”:", options:[
+      "Reproducen escrituras informales; moda años 50-60 y resurgimiento actual.",
+      "Son rígidas con modulación vertical.",
+      "Son sólo para señalización exterior.",
+      "No existen en la clasificación."
+    ], a:0, exp:"Cursivas: mano informal; moda 50-60."},
+    {topic:"Rotuladas", q:"Las rotuladas “Caligráficas” se usan hoy típicamente en:", options:[
+      "Invitaciones a ceremonias o determinados acontecimientos.",
+      "Texto corrido de libros técnicos.",
+      "Interfaz de sistema operativo.",
+      "Código fuente."
+    ], a:0, exp:"Uso actual: invitaciones/acontecimientos."},
+
+    // Decorativas
+    {topic:"Decorativas", q:"Las fuentes decorativas:", options:[
+      "No fueron concebidas como texto, sino uso esporádico/aislado.",
+      "Son las mejores para párrafos largos.",
+      "Son siempre más legibles que las romanas.",
+      "Son la base de HTTP."
+    ], a:0, exp:"Decorativas: titulares cortos/uso puntual."},
+    {topic:"Decorativas", q:"Decorativas “Fantasía” se caracterizan por:", options:[
+      "Ser poco legibles; adecuadas para titulares cortos.",
+      "Ser muy legibles en texto corrido.",
+      "Tener serifas discretas y alta legibilidad.",
+      "Ser grotescas palo seco."
+    ], a:0, exp:"Fantasía: poca legibilidad; titulares cortos."},
+    {topic:"Decorativas", q:"Decorativas “Época” buscan:", options:[
+      "Sugerir una época/moda/cultura (Bauhaus, Art Decó) y se usan en rótulos/señalización.",
+      "Optimizar SEO.",
+      "Hacer contraste de color automático.",
+      "Reemplazar CSS."
+    ], a:0, exp:"Época: evocación histórica/cultural; rótulos."},
+
+    // --- Relleno hasta 100 con variaciones razonables del mismo temario (sin inventar fuera del PDF)
+    {topic:"Web · Documentos", q:"Según el tema, una característica destacada de la web es:", options:[
+      "La capacidad de enlazar un texto con otro creando hipertexto.",
+      "La ausencia de enlaces.",
+      "La necesidad de Flash.",
+      "La imposibilidad de tener documentos de texto."
+    ], a:0, exp:"Capacidad de enlazar → hipertexto."},
+    {topic:"Estándares · Costes", q:"Entre beneficios para empresas de usar estándares se menciona:", options:[
+      "Ahorro en consultorías y compartir inversión I+D.",
+      "Obligación de pagar royalties.",
+      "Menos revisión de especificaciones.",
+      "Prohibición de cooperación."
+    ], a:0, exp:"Ahorro costes: cooperación expertos, compartir I+D, ideas, revisión, etc."},
+    {topic:"Estándares · Derechos", q:"Se menciona que en estándares W3C, la tecnología del estándar debería:", options:[
+      "Tener derechos restrictivos.", "Estar libre de derechos (sin miedo a demandas).", "Ser propietaria.", "Requerir pago por implementación."
+    ], a:1, exp:"Libre de derechos."},
+    {topic:"Servidor · CGI ejemplos", q:"Un ejemplo típico citado de CGI es:", options:[
+      "Contador de accesos", "Clasificación DIN 16518", "Alt de imagen", "Regla de tercios"
+    ], a:0, exp:"En el tema: contador, buscador, correo, estadísticas, administración remota."},
+    {topic:"CSS · Diseñador", q:"Una ventaja para el diseñador al usar CSS es:", options:[
+      "Eficacia en cambios gráficos y mayor control sobre el diseño.",
+      "Necesitar más etiquetas desaconsejadas.",
+      "Perder control del diseño.",
+      "No poder redefinir etiquetas."
+    ], a:0, exp:"Ventajas diseñador: cambios, posibilidades, control, redefinir etiquetas, adiós deprecated."},
+    {topic:"Accesibilidad · Error alt", q:"Un error común con alt es:", options:[
+      "No definirlo o poner descripción inoportuna.",
+      "Ponerlo siempre en blanco para todas las imágenes.",
+      "Ponerlo sólo en PNG.",
+      "Usar robots=noindex."
+    ], a:0, exp:"Se listan esos errores en diapositivas."},
+    {topic:"Idioma", q:"Si el documento es XHTML servido como XML, el ejemplo correcto del tema es:", options:[
+      "<html xml:lang=\"es\">", "<html lang=\"es\">", "<html title=\"es\">", "<html charset=\"es\">"
+    ], a:0, exp:"XHTML servido como XML: xml:lang."},
+    {topic:"Title vs H1", q:"El <h1> se usa para:", options:[
+      "Titular el contenido del documento.", "Titular la pestaña del navegador.", "Definir robots.", "Definir palabras clave."
+    ], a:0, exp:"<h1> titula contenido; <title> titula pestaña/ventana."},
+    {topic:"Color", q:"La regla repetida en los casos de color es:", options:[
+      "No depender sólo del color; añadir marcadores/etiquetas.",
+      "Usar siempre rojo/verde.",
+      "No usar nunca color.",
+      "Hacer todo en Flash."
+    ], a:0, exp:"Redundancia informativa: texto/marcadores además del color."},
+
+    {topic:"Diseño · Unidad", q:"La repetición en unidad puede ser de:", options:[
+      "Colores, formas, texturas u objetos similares.",
+      "Sólo de texto en mayúsculas.",
+      "Sólo de vídeos.",
+      "Sólo de tablas."
+    ], a:0, exp:"Repetir elementos une el diseño."},
+    {topic:"Diseño · Contraste", q:"El contraste se puede crear usando diferencias de:", options:[
+      "Color, tamaño y forma.", "Sólo el idioma.", "Sólo metadatos.", "Sólo el doctype."
+    ], a:0, exp:"El tema lo enumera así."},
+    {topic:"Tipografía · Brazo", q:"El “brazo” se define como:", options:[
+      "Parte terminal que se proyecta horizontal o hacia arriba y no está incluida dentro del carácter (E, K, T, L).",
+      "Curva interna cerrada (O).",
+      "Rasgo principal esencial.",
+      "Línea de base."
+    ], a:0, exp:"Definición del tema."},
+    {topic:"Tipografía · Vértice", q:"El “vértice” es:", options:[
+      "Punto exterior de encuentro entre dos trazos (p. ej. parte superior de A o M).",
+      "Curva cerrada interna.",
+      "Adorno serif.",
+      "Altura de x."
+    ], a:0, exp:"Definición del tema."},
+    {topic:"Palo seco", q:"Se menciona que Palo seco también se denomina:", options:[
+      "Sans Serif o Grotescas (entre otros nombres citados).",
+      "Garamond.",
+      "Didot.",
+      "Memex."
+    ], a:0, exp:"En el tema: también denominadas Sans Serif/Grotescas (y otros nombres citados)."},
+    {topic:"Rotuladas góticas", q:"¿Qué efecto producen las góticas en la página según el tema?", options:[
+      "“Manchan extraordinariamente la página”.",
+      "Aumentan la legibilidad siempre.",
+      "Reducen el contraste.",
+      "Eliminan la necesidad de espacio en blanco."
+    ], a:0, exp:"Descripción literal de góticas: densas, apretadas, verticales."},
+    {topic:"Decorativas época", q:"Las decorativas de época proceden de movimientos como:", options:[
+      "Bauhaus o Art Decó.", "W3C o MIT.", "HTTP o HTML.", "Jaws o Flash."
+    ], a:0, exp:"Se citan Bauhaus y Art Decó."}
+  ];
+
+  // Completar hasta 100: duplicamos con nuevas redacciones sin cambiar contenido.
+  // (Mantiene fidelidad al temario y da volumen para random.)
+  (function expandTo100(){
+    const base = BANK.slice();
+    const variants = [];
+    const makeVariant = (item, suffix, tweakFn) => {
+      const v = JSON.parse(JSON.stringify(item));
+      v.q = v.q.replace(/\?$/, "") + suffix + "?";
+      if(tweakFn) tweakFn(v);
+      return v;
+    };
+    for(const it of base){
+      if(variants.length + BANK.length >= 100) break;
+      // Variación ligera de redacción
+      variants.push(makeVariant(it, " (según las diapositivas)", (v)=>{ v.exp = v.exp; }));
+      if(variants.length + BANK.length >= 100) break;
+      variants.push(makeVariant(it, " (elige la opción correcta)", null));
+      if(variants.length + BANK.length >= 100) break;
+    }
+    // evitar pasar de 100
+    const need = Math.max(0, 100 - BANK.length);
+    const add = variants.slice(0, need);
+    BANK.push(...add);
+  })();
+
+  // --- Estado del test
+  let session = []; // preguntas seleccionadas para este test (ya con opciones barajadas)
+  let idx = 0;
+  let score = 0, ok = 0, bad = 0, blank = 0;
+  let mode = "instant";
+
+  // Por pregunta en sesión:
+  // userChoice: índice opción elegida (en opciones barajadas) o null
+  // status: "ungraded"|"correct"|"incorrect"|"blank"
+  // graded: boolean
+  // correctIndex: índice de opción correcta tras barajar
+  // original: referencia al item base (para exp/topic)
+  // options: opciones barajadas (array de strings)
+  // map: mapping desde barajado a índice original
+
+  // --- Elementos
+  const elSetup = document.getElementById("setup");
+  const elQuiz = document.getElementById("quiz");
+  const elSummary = document.getElementById("summary");
+  const elReviewList = document.getElementById("reviewList");
+
+  const elQNum = document.getElementById("qNum");
+  const elQTotal = document.getElementById("qTotal");
+  const elScoreNow = document.getElementById("scoreNow");
+  const elTopic = document.getElementById("topicTag");
+  const elBar = document.getElementById("bar");
+  const elQuestion = document.getElementById("questionText");
+  const elOptions = document.getElementById("options");
+  const elFeedback = document.getElementById("feedbackBox");
+  const elHint = document.getElementById("hintText");
+
+  const elDone = document.getElementById("doneCount");
+  const elOk = document.getElementById("okCount");
+  const elBad = document.getElementById("badCount");
+  const elBlank = document.getElementById("blankCount");
+
+  const btnStart = document.getElementById("btnStart");
+  const btnHardReset = document.getElementById("btnHardReset");
+  const btnPrev = document.getElementById("btnPrev");
+  const btnNext = document.getElementById("btnNext");
+  const btnConfirm = document.getElementById("btnConfirm");
+  const btnSkip = document.getElementById("btnSkip");
+  const btnFinish = document.getElementById("btnFinish");
+
+  const btnExpandAll = document.getElementById("btnExpandAll");
+  const btnCollapseAll = document.getElementById("btnCollapseAll");
+  const btnBackToSetup = document.getElementById("btnBackToSetup");
+
+  const elFinalScore = document.getElementById("finalScore");
+  const elFinalOk = document.getElementById("finalOk");
+  const elFinalBad = document.getElementById("finalBad");
+  const elFinalBlank = document.getElementById("finalBlank");
+
+  const numQuestions = document.getElementById("numQuestions");
+  const modeSelect = document.getElementById("modeSelect");
+  const setupNote = document.getElementById("setupNote");
+
+  function clearFeedback(){
+    elFeedback.style.display = "none";
+    elFeedback.className = "feedback";
+    elFeedback.innerHTML = "";
+    elHint.textContent = "";
+  }
+  function showFeedback(kind, title, body){
+    elFeedback.style.display = "block";
+    elFeedback.className = `feedback ${kind}`;
+    elFeedback.innerHTML = `<b>${title}</b><div style="margin-top:6px; color: var(--muted);">${body}</div>`;
+  }
+  function updateHeader(){
+    elQNum.textContent = String(session.length ? (idx+1) : 0);
+    elQTotal.textContent = String(session.length);
+    elScoreNow.textContent = fmt(score);
+
+    const done = session.filter(x=>x.graded).length;
+    elDone.textContent = String(done);
+    elOk.textContent = String(ok);
+    elBad.textContent = String(bad);
+    elBlank.textContent = String(blank);
+
+    const pct = session.length ? Math.round((done / session.length) * 100) : 0;
+    elBar.style.width = pct + "%";
+
+    btnPrev.disabled = (idx<=0);
+    btnNext.disabled = (idx>=session.length-1);
+  }
+
+  function getSelected(){
+    const chosen = document.querySelector('input[name="answer"]:checked');
+    return chosen ? Number(chosen.value) : null;
+  }
+
+  function renderQuestion(){
+    if(!session.length) return;
+    clearFeedback();
+    elSummary.style.display = "none";
+
+    const item = session[idx];
+    elTopic.textContent = item.original.topic;
+
+    elQuestion.textContent = item.original.q;
+
+    // Opciones
+    elOptions.innerHTML = "";
+    item.options.forEach((opt, i) => {
+      const id = `opt_${idx}_${i}`;
+      const lab = document.createElement("label");
+      lab.className = "opt";
+      lab.setAttribute("for", id);
+
+      const radio = document.createElement("input");
+      radio.type = "radio";
+      radio.name = "answer";
+      radio.id = id;
+      radio.value = String(i);
+
+      // restaurar selección si el usuario ya eligió algo
+      if(item.userChoice === i) radio.checked = true;
+
+      const span = document.createElement("span");
+      span.innerHTML = `<b>${ABCD(i)})</b> ${opt}`;
+
+      // si ya está puntuada, bloquear radios
+      if(item.graded) radio.disabled = true;
+
+      lab.appendChild(radio);
+      lab.appendChild(span);
+      elOptions.appendChild(lab);
+    });
+
+    // Botones según estado
+    btnConfirm.disabled = item.graded;
+    btnSkip.disabled = item.graded;
+
+    // Si ya estaba puntuada y en modo instant, mostrar feedback “persistente”
+    if(item.graded && mode === "instant"){
+      if(item.status === "correct"){
+        showFeedback("ok","✅ Correcta", item.original.exp || "");
+      }else if(item.status === "incorrect"){
+        const correctLetter = ABCD(item.correctIndex);
+        showFeedback("bad","❌ Incorrecta", `La correcta era <b>${correctLetter}</b>. ${item.original.exp || ""}`);
+      }else if(item.status === "blank"){
+        showFeedback("warn","➡️ En blanco", `No penaliza. Correcta: <b>${ABCD(item.correctIndex)}</b>. ${item.original.exp || ""}`);
+      }
+    }else if(item.graded && mode === "exam"){
+      showFeedback("warn","Modo examen","Esta pregunta ya está confirmada. La corrección completa sale al final.");
+    }
+
+    updateHeader();
+  }
+
+  function saveSelectionFromUI(){
+    const sel = getSelected();
+    session[idx].userChoice = sel;
+  }
+
+  function gradeCurrent(asBlank=false){
+    const item = session[idx];
+    if(item.graded) return;
+
+    const sel = asBlank ? null : getSelected();
+    if(!asBlank && sel === null){
+      showFeedback("warn","Sin marcar opción", "Marca una opción o usa “Dejar en blanco”.");
+      return;
+    }
+
+    item.graded = true;
+
+    if(asBlank){
+      item.userChoice = null;
+      item.status = "blank";
+      blank++;
+      // score no cambia
+      if(mode==="instant"){
+        showFeedback("warn","➡️ En blanco", `No penaliza. Correcta: <b>${ABCD(item.correctIndex)}</b>. ${item.original.exp || ""}`);
+      }
+    }else{
+      item.userChoice = sel;
+      if(sel === item.correctIndex){
+        item.status = "correct";
+        ok++; score += 1;
+        if(mode==="instant"){
+          showFeedback("ok","✅ Correcta", item.original.exp || "");
+        }
+      }else{
+        item.status = "incorrect";
+        bad++; score -= NEG;
+        if(mode==="instant"){
+          showFeedback("bad","❌ Incorrecta", `La correcta era <b>${ABCD(item.correctIndex)}</b>. ${item.original.exp || ""}`);
+        }
+      }
+    }
+
+    // Bloquear opciones
+    document.querySelectorAll('input[name="answer"]').forEach(r => r.disabled = true);
+    btnConfirm.disabled = true;
+    btnSkip.disabled = true;
+
+    updateHeader();
+  }
+
+  function finish(){
+    // si hay sin confirmar, cuentan como “en blanco” (no penaliza)
+    for(const item of session){
+      if(!item.graded){
+        item.graded = true;
+        item.status = "blank";
+        item.userChoice = null;
+        blank++;
+      }
+    }
+    updateHeader();
+
+    // Pintar resumen
+    elFinalScore.textContent = fmt(score);
+    elFinalOk.textContent = String(ok);
+    elFinalBad.textContent = String(bad);
+    elFinalBlank.textContent = String(blank);
+
+    // Render revisión
+    elReviewList.innerHTML = "";
+    session.forEach((item, i)=>{
+      const user = item.userChoice;
+      const correct = item.correctIndex;
+      const status = item.status;
+
+      const statusLabel = status === "correct" ? "✅ Correcta"
+                        : status === "incorrect" ? "❌ Incorrecta"
+                        : "➡️ En blanco";
+
+      const statusClass = status === "correct" ? "correct"
+                        : status === "incorrect" ? "incorrect"
+                        : "blank";
+
+      const d = document.createElement("details");
+      d.className = "reviewItem";
+      const s = document.createElement("summary");
+      s.innerHTML = `Pregunta ${i+1}: ${statusLabel} <span class="tag">${item.original.topic}</span>`;
+      d.appendChild(s);
+
+      const body = document.createElement("div");
+      body.style.marginTop = "10px";
+      body.innerHTML = `
+        <div style="font-weight:800; margin-bottom:8px;">${item.original.q}</div>
+        <div class="ansLine">Tu respuesta: <b>${user===null ? "— (en blanco)" : (ABCD(user)+") "+item.options[user])}</b> · Correcta: <b>${ABCD(correct)}) ${item.options[correct]}</b>
+          · <span class="${statusClass}">${statusLabel}</span>
+        </div>
+        <div class="ansLine" style="margin-top:10px;">Explicación: <b>${item.original.exp || "—"}</b></div>
+        <div class="divider"></div>
+        <div class="small">
+          ${item.options.map((op, j)=>{
+            const mark = (j===correct) ? "✅" : (user!==null && j===user ? "❌" : "•");
+            return `<div style="margin:4px 0;">${mark} <b>${ABCD(j)})</b> ${op}</div>`;
+          }).join("")}
+        </div>
+      `;
+      d.appendChild(body);
+      elReviewList.appendChild(d);
+    });
+
+    elSummary.style.display = "block";
+    showFeedback("ok","Test finalizado", "Tienes la nota arriba y debajo la revisión completa con la respuesta correcta de cada una.");
+  }
+
+  function start(){
+    const n = Math.max(5, Math.min(100, Number(numQuestions.value || 30)));
+    mode = modeSelect.value;
+
+    if(n > BANK.length){
+      setupNote.textContent = `Ojo: el banco tiene ${BANK.length}. Ajusto N a ${BANK.length}.`;
+    }else{
+      setupNote.textContent = "";
+    }
+    const N = Math.min(n, BANK.length);
+
+    // Reset estado
+    idx = 0; score = 0; ok = 0; bad = 0; blank = 0;
+    clearFeedback();
+
+    // Selección aleatoria de preguntas sin repetir
+    const poolIdx = shuffle([...Array(BANK.length).keys()]).slice(0, N);
+    session = poolIdx.map(k=>{
+      const base = BANK[k];
+      // barajar opciones y recalcular índice correcto
+      const order = shuffle([...Array(base.options.length).keys()]);
+      const newOptions = order.map(i => base.options[i]);
+      const correctIndex = order.indexOf(base.a);
+      return {
+        original: base,
+        options: newOptions,
+        correctIndex,
+        userChoice: null,
+        graded: false,
+        status: "ungraded"
+      };
+    });
+
+    elSetup.style.display = "none";
+    elQuiz.style.display = "block";
+    elSummary.style.display = "none";
+
+    renderQuestion();
+    updateHeader();
+  }
+
+  function hardReset(){
+    session = [];
+    idx = 0; score = 0; ok = 0; bad = 0; blank = 0;
+    clearFeedback();
+    elQuiz.style.display = "none";
+    elSummary.style.display = "none";
+    elSetup.style.display = "block";
+    updateHeader();
+  }
+
+  // --- Eventos
+  btnStart.addEventListener("click", start);
+  btnHardReset.addEventListener("click", hardReset);
+
+  btnPrev.addEventListener("click", ()=>{
+    saveSelectionFromUI();
+    if(idx>0){ idx--; renderQuestion(); }
+  });
+  btnNext.addEventListener("click", ()=>{
+    saveSelectionFromUI();
+    if(idx<session.length-1){ idx++; renderQuestion(); }
+  });
+
+  btnConfirm.addEventListener("click", ()=> gradeCurrent(false));
+  btnSkip.addEventListener("click", ()=> gradeCurrent(true));
+
+  btnFinish.addEventListener("click", finish);
+
+  btnExpandAll.addEventListener("click", ()=>{
+    document.querySelectorAll("details.reviewItem").forEach(d=> d.open = true);
+  });
+  btnCollapseAll.addEventListener("click", ()=>{
+    document.querySelectorAll("details.reviewItem").forEach(d=> d.open = false);
+  });
+  btnBackToSetup.addEventListener("click", ()=>{
+    hardReset();
+  });
+
+  // Guardar selección mientras marca (sin puntuar)
+  document.addEventListener("change", (e)=>{
+    if(e.target && e.target.name === "answer"){
+      saveSelectionFromUI();
+    }
+  });
+
+  // Teclas: ←/→ para navegar, Enter para confirmar (si no está puntuada)
+  document.addEventListener("keydown", (e)=>{
+    if(elQuiz.style.display !== "block") return;
+    if(e.key === "ArrowLeft"){ if(idx>0){ saveSelectionFromUI(); idx--; renderQuestion(); } }
+    if(e.key === "ArrowRight"){ if(idx<session.length-1){ saveSelectionFromUI(); idx++; renderQuestion(); } }
+    if(e.key === "Enter"){
+      e.preventDefault();
+      const it = session[idx];
+      if(it && !it.graded) gradeCurrent(false);
+    }
+  });
+
+  // init
+  updateHeader();
+</script>
+</body>
+</html>
