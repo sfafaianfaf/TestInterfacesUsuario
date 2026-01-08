@@ -1,0 +1,651 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tema 3 · IPO · Banco 50 (excluye 39–57)</title>
+  <style>
+    :root{
+      --bg:#0b1220;--card:#121a2b;--text:#e7eefc;--muted:#9aa4b2;--border:#24304a;
+      --accent:#6ea8fe;--ok:#57d18a;--bad:#ff6b6b;--warn:#ffd166;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      background: radial-gradient(1200px 600px at 20% 0%, #132044 0%, var(--bg) 60%);
+      color:var(--text);
+    }
+    .wrap{max-width:980px;margin:0 auto;padding:22px 14px 48px;}
+    .top{display:flex;gap:12px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap}
+    h1{margin:0;font-size:20px}
+    .sub{margin:6px 0 0;color:var(--muted);font-size:13px;line-height:1.35}
+    .pillrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+    .pill{border:1px solid var(--border);color:var(--muted);padding:3px 10px;border-radius:999px;font-size:12px}
+    .card{
+      margin-top:14px; border:1px solid var(--border);
+      background: linear-gradient(180deg, rgba(18,26,43,.92), rgba(18,26,43,.7));
+      border-radius:16px; padding:14px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.25);
+    }
+    .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+    label{font-size:13px;color:var(--muted)}
+    select, input[type="number"]{
+      background:#0b1220;color:var(--text);border:1px solid var(--border);
+      padding:10px 10px;border-radius:12px;outline:none;
+    }
+    button{
+      background:rgba(110,168,254,.16);
+      color:var(--text);border:1px solid rgba(110,168,254,.45);
+      padding:10px 12px;border-radius:12px;cursor:pointer;
+      font-weight:800;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+    }
+    button.primary{background:rgba(110,168,254,.85); color:#06101f; border-color:rgba(110,168,254,.85)}
+    button.good{background:rgba(87,209,138,.20); border-color:rgba(87,209,138,.55)}
+    button.ghost{background:transparent;border-color:var(--border);color:var(--muted)}
+    button:disabled{opacity:.45;cursor:not-allowed}
+    .qhead{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center}
+    .qmeta{color:var(--muted);font-size:12px}
+    .qtext{margin:10px 0 10px;font-size:16px;line-height:1.35}
+    .opts{display:grid;grid-template-columns:1fr;gap:10px;margin-top:8px}
+    .opt{
+      border:1px solid var(--border);
+      background: rgba(11,18,32,.55);
+      border-radius:14px;
+      padding:10px 10px;
+      display:flex;gap:10px;align-items:flex-start;
+    }
+    .opt input{margin-top:3px;transform:scale(1.15)}
+    .opt .txt{font-size:14px;line-height:1.3}
+    .bar{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;align-items:center}
+    .feedback{
+      margin-top:10px; border-radius:14px; padding:10px 12px; font-size:13px; line-height:1.35;
+      border:1px solid var(--border); background: rgba(11,18,32,.55);
+    }
+    .feedback.ok{border-color:rgba(87,209,138,.55); background: rgba(87,209,138,.10)}
+    .feedback.bad{border-color:rgba(255,107,107,.55); background: rgba(255,107,107,.10)}
+    .feedback.warn{border-color:rgba(255,209,102,.55); background: rgba(255,209,102,.10)}
+    .hr{height:1px;background:rgba(36,48,74,.7);margin:14px 0}
+    details.reviewItem{
+      border:1px solid var(--border); border-radius:14px; padding:10px 12px;
+      background: rgba(11,18,32,.55); margin-top:10px;
+    }
+    summary{cursor:pointer;font-weight:900}
+    .small{color:var(--muted);font-size:12px}
+    .tag{display:inline-block;border:1px solid var(--border);border-radius:999px;padding:2px 8px;margin-left:8px;color:var(--muted);font-size:12px}
+    .ans{margin-top:8px;font-size:13px;line-height:1.35}
+    .okText{color:var(--ok);font-weight:900}
+    .badText{color:var(--bad);font-weight:900}
+    .warnText{color:var(--warn);font-weight:900}
+    .footerNote{margin-top:10px;color:var(--muted);font-size:12px}
+    @media (max-width:720px){
+      button{width:100%}
+      .bar{flex-direction:column;align-items:stretch}
+      .qhead{flex-direction:column;align-items:flex-start}
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div>
+      <h1>Tema 3 · Guías de estilo y diseño (Banco 50) — excluye diap. 39–57</h1>
+      <p class="sub">
+        Puntuación: <b>+1</b> correcta, <b>−1/3</b> incorrecta, <b>0</b> en blanco.
+        Navegación con Atrás/Siguiente, confirmación y revisión final.
+      </p>
+      <div class="pillrow">
+        <span class="pill">Aleatorio</span>
+        <span class="pill">Móvil friendly</span>
+        <span class="pill">Revisión final</span>
+        <span class="pill">Sin bloque CUA 39–57</span>
+      </div>
+    </div>
+  </div>
+
+  <div id="setup" class="card">
+    <div class="row">
+      <div>
+        <label for="nq">¿Cuántas preguntas quieres hacer?</label><br/>
+        <input id="nq" type="number" min="1" max="50" value="20" />
+        <span class="small"> (máx. 50)</span>
+      </div>
+      <div>
+        <label for="seed">Orden</label><br/>
+        <select id="seed">
+          <option value="random" selected>Barajar cada vez</option>
+          <option value="fixed">Orden fijo (para repetir)</option>
+        </select>
+      </div>
+      <div style="flex:1"></div>
+      <div>
+        <button id="btnStart" class="primary">Empezar test</button>
+      </div>
+    </div>
+    <div class="footerNote">
+      iPhone: abre desde GitHub Pages en Safari y “Añadir a pantalla de inicio”.
+    </div>
+  </div>
+
+  <div id="quiz" class="card" style="display:none;">
+    <div class="qhead">
+      <div class="qmeta" id="qmeta">Pregunta 1/20</div>
+      <div class="qmeta" id="scoreLive">Aciertos: 0 · Fallos: 0 · En blanco: 0 · Nota: 0.00</div>
+    </div>
+
+    <div class="qtext" id="qtext"></div>
+    <div class="opts" id="opts"></div>
+
+    <div class="bar">
+      <button id="btnPrev" class="ghost">⬅️ Atrás</button>
+      <button id="btnNext" class="ghost">Siguiente ➡️</button>
+      <div style="flex:1"></div>
+      <button id="btnSkip" class="ghost">Dejar en blanco</button>
+      <button id="btnConfirm" class="primary">Confirmar respuesta</button>
+      <button id="btnFinish" class="good">Finalizar test</button>
+    </div>
+
+    <div id="feedback" class="feedback" style="display:none;"></div>
+  </div>
+
+  <div id="results" class="card" style="display:none;">
+    <h2 style="margin:0 0 6px;">Resultados</h2>
+    <div class="qmeta" id="finalLine"></div>
+    <div class="hr"></div>
+    <div class="bar">
+      <button id="btnExpandAll" class="ghost">Expandir todo</button>
+      <button id="btnCollapseAll" class="ghost">Colapsar todo</button>
+      <div style="flex:1"></div>
+      <button id="btnBackToSetup" class="primary">Hacer otro test</button>
+    </div>
+    <div id="review"></div>
+  </div>
+</div>
+
+<script>
+/* ========= TAP (sin doble salto) ========= */
+function bindTap(el, fn){
+  let last = 0;
+  el.addEventListener("click", (e) => {
+    e.preventDefault();
+    const now = Date.now();
+    if (now - last < 350) return;
+    last = now;
+    fn();
+  }, { passive:false });
+}
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+function clamp(n, lo, hi){ return Math.max(lo, Math.min(hi, n)); }
+function fmt(n){ return (Math.round(n*100)/100).toFixed(2); }
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, (c)=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+}
+
+/* ========= BANCO 50 · Tema 3 (excluye diap. 39–57) =========
+   He evitado preguntas sobre control del diálogo / modelo gráfico / ventanas / ayuda (bloque 39–57).
+   Y he intentado equilibrar longitudes de opciones para que no “cante” la correcta.
+*/
+const BANK = [
+  {q:"En el tema, ¿qué se busca con estándares y guías de estilo en IPO?",
+   a:["Asegurar una base común de diseño y consistencia de interfaces.","Sustituir por completo las pruebas con usuarios.","Eliminar la necesidad de diseño visual en la interfaz.","Convertir cualquier interfaz en usable automáticamente."], c:0,
+   e:"Se presentan como base para diseño consistente; no garantizan por sí solas usabilidad."},
+
+  {q:"Diferencia clave: un ‘principio’ frente a una ‘directriz’ (regla) es que el principio…",
+   a:["es un objetivo general y la directriz concreta cómo aplicarlo.","es un ejemplo gráfico y la directriz es un estándar legal.","es siempre obligatorio y la directriz siempre opcional.","solo aplica a color y la directriz solo a tipografía."], c:0,
+   e:"Principios organizan objetivos; directrices bajan a nivel de regla aplicable."},
+
+  {q:"Según el tema, los principios suelen…",
+   a:["no especificar métodos concretos para obtener el diseño final.","definir el layout exacto y obligatorio de cada pantalla.","ser equivalentes a un estándar ISO por definición.","describir únicamente hardware y periféricos."], c:0,
+   e:"Se indica que organizan objetivos pero no dictan el ‘cómo’ exacto."},
+
+  {q:"¿Qué autor se asocia a ‘dejar el control a los usuarios’ en los principios citados?",
+   a:["Simpson (1985).","Preece (1994).","IBM (2001).","W3C (WAI)."], c:0,
+   e:"Aparece en la lista de autores de principios."},
+
+  {q:"Preece (1994) aparece defendiendo especialmente…",
+   a:["mantener la consistencia en el diseño.","usar solo color azul de fondo.","evitar iconos en interfaces modernas.","prohibir menús desplegables por defecto."], c:0,
+   e:"Se cita explícitamente ‘mantener la consistencia’."},
+
+  {q:"Los principios de IBM (2001) incluyen (según el tema)…",
+   a:["satisfacción y disponibilidad, entre otros.","solo velocidad de CPU y memoria.","únicamente accesibilidad web WCAG.","exclusivamente ‘hacer todo azul’."], c:0,
+   e:"En diapositivas se listan como principios aún vigentes."},
+
+  {q:"Una razón por la que los principios ayudan al diseño es que…",
+   a:["permiten consistencia dentro de un sistema o familia de productos.","garantizan que no habrá errores de usuario nunca.","obligan al usuario a aprender comandos de memoria.","eliminan la necesidad de terminología común."], c:0,
+   e:"Se remarca la consistencia como ventaja."},
+
+  {q:"Ejemplo de directriz (regla) del tema es…",
+   a:["Incluir botones OK y CANCEL en diálogos cuando corresponda.","‘La interfaz debe ser bonita’, sin más detalles.","‘El usuario es importante’, sin implicaciones.","‘No usar nunca texto’, porque distrae."], c:0,
+   e:"Aparecen ejemplos típicos (OK/CANCEL, doble clic, etc.)."},
+
+  {q:"Un estándar, según el tema, es…",
+   a:["un requisito/regla/recomendación basado en consenso y aprobado por una entidad reconocida.","un truco de diseño visual sin validación.","un estilo personal del diseñador aplicado libremente.","una lista de iconos sin relación con tareas."], c:0,
+   e:"Definición típica de estándar: consenso + entidad reconocida."},
+
+  {q:"Los estándares pueden clasificarse por alcance como…",
+   a:["locales, nacionales e internacionales.","solo corporativos y personales.","únicamente de hardware, nunca de software.","solo educativos y sanitarios."], c:0,
+   e:"Se listan esos niveles."},
+
+  {q:"Los estándares ‘de iure’ se caracterizan por…",
+   a:["ser producidos por comités con apoyo gubernamental o estatus legal.","nacer siempre de un producto exitoso en el mercado.","ser creados solo por fabricantes (Apple/Microsoft).","ser estándares locales sin reconocimiento."], c:0,
+   e:"De iure: comités + apoyo institucional/legal."},
+
+  {q:"Los estándares ‘de facto’ suelen…",
+   a:["nacer de productos exitosos o trabajos que se imponen por adopción.","ser obligatorios por ley en todos los países.","ser exclusivamente ISO/IEC por definición.","aplicar solo a la web y accesibilidad."], c:0,
+   e:"De facto: por éxito/adopción masiva."},
+
+  {q:"¿Qué organismos se citan como referencia para estándares de iure en informática?",
+   a:["ISO e IEC (entre otros).","Apple y Motif.","W3C y Yale únicamente.","IBM y Microsoft como comités legales."], c:0,
+   e:"En las diapositivas se listan ISO/IEC como claves."},
+
+  {q:"Beneficios típicos de estándares/guías de estilo citados incluyen…",
+   a:["terminología común, mantenimiento/evolución y reducción de formación.","obligar a memorizar comandos para ser más rápido.","más complejidad para que el usuario ‘aprenda’.","eliminar identidad común del producto."], c:0,
+   e:"Aparecen como lista de beneficios."},
+
+  {q:"En guías de estilo, una distinción habitual del tema es…",
+   a:["guías comerciales vs guías corporativas.","guías de teclado vs guías de ratón.","guías legales vs guías secretas.","guías de RV vs guías de olfato."], c:0,
+   e:"Se mencionan tipos: comerciales y corporativas."},
+
+  {q:"Las guías de estilo comerciales se describen como…",
+   a:["producidas por fabricantes de software/hardware y típicamente de facto.","siempre emitidas por ISO con estatus legal.","documentos internos sin relación con plataformas.","solo aplicables a un único usuario."], c:0,
+   e:"Apple, Motif, Windows, etc. como ejemplos de guías comerciales."},
+
+  {q:"Windows, Motif u OS/2 se mencionan en el tema principalmente como…",
+   a:["referencias de guías de estilo comerciales/de facto.","estándares de iure emitidos por ISO.","métodos de evaluación de usabilidad.","tipos de iconos según representatividad."], c:0,
+   e:"Aparecen como ejemplos de guías de estilo de plataforma."},
+
+  {q:"El W3C alberga la iniciativa WAI, centrada en…",
+   a:["accesibilidad web (guías y recomendaciones).","definir teclados internacionales.","estándares de impresión CMYK.","sensores oculares por infrarrojos."], c:0,
+   e:"WAI = Web Accessibility Initiative."},
+
+  {q:"WCAG son…",
+   a:["guías de accesibilidad para contenido web (principios para sitios accesibles).","un estándar de color aditivo RGB.","un conjunto de iconos coordinados por familias.","una regla para número ideal de opciones en menús."], c:0,
+   e:"Web Content Accessibility Guidelines."},
+
+  {q:"Según el tema, una organización puede crear su estilo corporativo para…",
+   a:["mantener coherencia en una suite de productos y reforzar identidad.","cambiar iconos al azar en cada pantalla.","obligar al usuario a reaprender cada versión.","evitar consistencia para ‘innovar’."], c:0,
+   e:"Se habla de coherencia y estilo común entre productos."},
+
+  {q:"El objetivo del diseño gráfico de interfaz, según el tema, es…",
+   a:["crear una interfaz ‘transparente’ que no obstruya el acceso.","hacer la interfaz llamativa aunque tape la tarea.","maximizar adornos por encima de la función.","ocultar información crítica para simplificar."], c:0,
+   e:"Interfaz transparente y buena experiencia."},
+
+  {q:"El tema sugiere como enfoque general de diseño…",
+   a:["considerar el conjunto y conjuntar diseño funcional y visual.","separar siempre función y estética sin relación.","priorizar solo el color sobre cualquier otro elemento.","usar el máximo número de fuentes tipográficas."], c:0,
+   e:"Se insiste en visión de conjunto y unión funcional+visual."},
+
+  {q:"En el ‘alfabeto gráfico’ del tema aparece como elemento morfológico…",
+   a:["punto, línea, forma, luz y color (entre otros).","solo teclado, ratón y pantalla.","ventanas, menús y cajas de diálogo.","ayuda contextual, tutorial y glosario."], c:0,
+   e:"El tema enumera elementos morfológicos de composición."},
+
+  {q:"El punto, como elemento gráfico, se caracteriza por…",
+   a:["ser simple y actuar como marca/atractor visual en composición.","definir siempre volumen tridimensional por sí mismo.","obligar a usar color azul para no vibrar.","ser equivalente a una guía ISO."], c:0,
+   e:"Se menciona su fuerza atractiva como marca."},
+
+  {q:"La línea, según el tema, sirve para…",
+   a:["organizar el espacio creando ejes y delimitando zonas.","sustituir por completo el texto en interfaces.","impedir jerarquías visuales por diseño.","representar únicamente sombras y profundidad."], c:0,
+   e:"Líneas organizan espacio, ejes, zonas de atracción."},
+
+  {q:"La forma (cuadrado/triángulo/círculo) se presenta como…",
+   a:["superficie que ayuda a definir y organizar el espacio visual.","un estándar de iure emitido por comités legales.","una técnica exclusiva para iconos similares.","un tipo de codificación de color RGB."], c:0,
+   e:"Formas básicas y su función organizadora."},
+
+  {q:"La luz en la composición puede…",
+   a:["sugerir profundidad y modelar superficies.","eliminar la necesidad de contraste en texto.","convertir automáticamente iconos en intuitivos.","sustituir el layout y la jerarquía visual."], c:0,
+   e:"Se menciona profundidad/tridimensionalidad."},
+
+  {q:"El color, según el tema, puede contribuir a…",
+   a:["recrear espacio y simular profundidad (sombreado), además de significado.","hacer ilegible el texto para forzar atención.","eliminar el modelo mental del usuario.","convertir CMYK en RGB sin pérdida."], c:0,
+   e:"Se citan esas funciones del color."},
+
+  {q:"Relaciones dinámicas entre colores: ‘armonía’ se asocia a…",
+   a:["variaciones cromáticas suaves y agradables.","contrastes extremos siempre saturados.","vibración visual intencional para alertas.","usar rojo y verde en periferia."], c:0,
+   e:"Armonía = variaciones suaves (según el tema)."},  
+
+  {q:"El tamaño de un elemento ayuda principalmente a…",
+   a:["establecer jerarquía visual por el espacio que ocupa.","evitar por completo los errores de usuario.","definir estándares de iure automáticamente.","reducir el número de opciones en menús."], c:0,
+   e:"Se cita jerarquización por peso visual/tamaño."},
+
+  {q:"El ‘formato’ en composición es…",
+   a:["la proporción del cuadro donde se muestra la imagen.","una guía corporativa de Apple.","un tipo de icono arbitrario.","el sistema sustractivo CMYK."], c:0,
+   e:"Formato = proporción del cuadro."},
+
+  {q:"La composición se define como…",
+   a:["organización de elementos morfológicos en el espacio del formato.","una lista de atajos de teclado para expertos.","una norma legal ISO para todos los sistemas.","el método para barajar preguntas del test."], c:0,
+   e:"Composición = organizar elementos en el espacio."},
+
+  {q:"Una regla de composición citada es que…",
+   a:["la zona inferior suele percibirse más estable/sólida que la superior.","la zona superior siempre es menos llamativa.","la zona izquierda es siempre más dinámica que la derecha.","la composición no influye en atención."], c:0,
+   e:"Aparece como regla general de peso visual."},
+
+  {q:"El color en interfaz tiene gran impacto porque…",
+   a:["puede mejorar presentación si se usa bien, y empeorarla si se usa mal.","solo afecta a iconos, nunca a texto.","no influye en búsqueda visual del usuario.","siempre reduce carga cognitiva sin condiciones."], c:0,
+   e:"Se advierte de buen/mal uso y su impacto."},
+
+  {q:"Según el tema, una consecuencia del ojo humano respecto al azul es que…",
+   a:["las líneas azules delgadas pueden verse peor (por menor sensibilidad).","el azul siempre se ve más nítido que el negro.","no hay diferencias perceptivas según color.","el azul es ideal para texto fino en cualquier caso."], c:0,
+   e:"Se comenta menor sensibilidad y problemas con azul en trazos finos."},
+
+  {q:"RGB es un sistema…",
+   a:["aditivo.","sustractivo.","legal/de iure.","de composición tipográfica."], c:0,
+   e:"RGB = aditivo."},
+
+  {q:"CMYK es un sistema…",
+   a:["sustractivo.","aditivo.","de metáforas globales.","de evaluación heurística."], c:0,
+   e:"CMYK = sustractivo."},
+
+  {q:"El uso inefectivo del color puede provocar…",
+   a:["vibraciones/sombras y distracción del usuario.","mejor legibilidad automática.","menor necesidad de contraste siempre.","que todo sea más accesible por defecto."], c:0,
+   e:"Se citan vibraciones, sombras y distracción."},
+
+  {q:"El color ayuda a modelos mentales eficientes cuando…",
+   a:["se vincula a significados prácticos e intuitivos y se usa con consistencia.","se cambia aleatoriamente en cada pantalla.","se evita por completo en mensajes importantes.","se utiliza solo para decoración sin función."], c:0,
+   e:"Consistencia + significado ayudan a orientar al usuario."},
+
+  {q:"Una recomendación de usabilidad del tema es usar color en mensajes: por ejemplo…",
+   a:["rojo para alertar de un error y amarillo para avisos.","azul para errores y negro para éxito.","verde para errores y rojo para confirmaciones.","morado para todo porque es neutro."], c:0,
+   e:"Se muestra codificación típica en mensajes."},
+
+  {q:"Respecto a cultura y color, el tema destaca que…",
+   a:["hay un ‘lenguaje de color’ común/cultural y hay que considerarlo.","los colores significan lo mismo en todas las culturas.","solo importa el RGB, no la cultura.","la cultura solo afecta a tipografías."], c:0,
+   e:"Se advierte del componente cultural."},
+
+  {q:"Combinar colores para efectos positivos requiere…",
+   a:["conocer técnicas/reglas de combinación y evitar parejas conflictivas.","usar siempre colores espectrales extremos saturados.","poner texto azul fino sobre fondo negro.","eliminar contraste porque distrae."], c:0,
+   e:"Se habla de reglas y técnicas de combinación."},
+
+  {q:"Una recomendación concreta del tema para evitar problemas es…",
+   a:["evitar colores espectralmente extremos muy saturados al mismo tiempo.","usar rojo y verde en periferia para resaltar siempre.","usar líneas azules delgadas para marcar secciones.","basar toda jerarquía solo en el azul."], c:0,
+   e:"Se citan extremos saturados como fuente de vibración."},
+
+  {q:"Otra recomendación perceptiva citada es…",
+   a:["evitar usar rojo y verde en la periferia de la pantalla.","usar rojo/verde siempre en bordes para accesibilidad.","poner texto azul fino porque ‘destaca’ más.","reducir contraste para evitar fatiga."], c:0,
+   e:"Se menciona dificultad de enfoque en periferia con rojo/verde."},
+
+  {q:"Los iconos son útiles (según el tema) porque…",
+   a:["provocan reacción rápida y ayudan a reconocer acciones/objetos.","siempre eliminan la necesidad de texto explicativo.","son iguales en todas las culturas y contextos.","sustituyen por completo el feedback del sistema."], c:0,
+   e:"Se subraya reacción rápida/reconocimiento."},
+
+  {q:"Factores que determinan el significado de un icono incluyen…",
+   a:["contexto de uso y función/tarea asociada.","solo el color de fondo y el DPI.","únicamente la marca del monitor.","la versión del navegador web."], c:0,
+   e:"Se listan contexto y función como claves."},
+
+  {q:"Tipos de iconos según representatividad: ‘iconos similares’ son los que…",
+   a:["representan el concepto con una imagen análoga al objeto real.","son abstractos sin relación con el mundo real.","se basan solo en letras y números.","solo se entienden tras un tutorial largo."], c:0,
+   e:"‘Similares’ = análogos al objeto."},
+
+  {q:"Tras decidir el objeto del icono, el siguiente dilema típico es…",
+   a:["si dibujarlo más detallado o más simplificado.","si usar solo CMYK o solo RGB.","si hacerlo siempre en azul fino.","si prohibir el uso de metáforas."], c:0,
+   e:"Se menciona el grado de detalle vs simplificación."},
+
+  {q:"En general, el tema sugiere como regla en iconos que…",
+   a:["la simplicidad suele ayudar al reconocimiento rápido (sin pasarse).","cuanto más detalle, mejor siempre.","los iconos deben ser fotorealistas obligatoriamente.","la ambigüedad es buena para ‘flexibilidad’."], c:0,
+   e:"Idea típica: simplificar para reconocimiento (sin perder significado)."},
+
+  {q:"Un ‘conjunto coordinado de iconos’ se diseña mejor porque…",
+   a:["reduce esfuerzo global y mejora consistencia visual del sistema.","obliga a usar una fuente distinta por icono.","hace que cada icono sea totalmente independiente.","impide reutilizar patrones y por tanto mejora."], c:0,
+   e:"Se listan ventajas: esfuerzo y consistencia."},
+
+  {q:"El tema señala como buena práctica que…",
+   a:["diseñar un set coordinado es mejor que diseñar iconos uno a uno sin plan.","los iconos deben cambiar en cada pantalla para evitar monotonía.","siempre se debe evitar cualquier familia de iconos.","los iconos solo sirven en sistemas antiguos."], c:0,
+   e:"Se muestra explícitamente la ventaja del diseño coordinado."},
+
+  {q:"Sobre guías web, el tema menciona como recursos de referencia…",
+   a:["usability.gov y manuales reconocidos (p.ej., Yale).","solo Microsoft Word y Finder.","únicamente ISO/IEC 9126 para color.","solo páginas internas privadas sin acceso."], c:0,
+   e:"Se citan enlaces como usability.gov y manual de Yale como referencia."},
+
+  {q:"Sobre diseño para web frente a interfaces tradicionales, el tema resume que…",
+   a:["hay principios aplicables, pero la web tiene particularidades propias.","no hay ningún principio reutilizable, todo cambia.","la web exige siempre CMYK y no RGB.","la web solo puede usar texto, nunca iconos."], c:0,
+   e:"Se indica que hay solapamiento, pero la web introduce diferencias."},
+
+  {q:"Una afirmación coherente con el tema es que las guías…",
+   a:["proporcionan base, pero no garantizan por sí solas usabilidad.","eliminan la necesidad de evaluación con usuarios.","hacen innecesario el conocimiento del entorno.","funcionan igual sin importar plataforma o contexto."], c:0,
+   e:"Se insiste: base sí, garantía total no."},
+
+  {q:"El tema indica que el diseñador debe…",
+   a:["conocer las guías del entorno/plataforma en el que trabaja.","ignorar guías para evitar restricciones.","usar solo su gusto personal como estándar.","evitar consistencia para no parecer ‘clásico’."], c:0,
+   e:"Se menciona como conclusión final."},
+
+  {q:"¿Cuál es un ejemplo de guía de estilo ‘de plataforma’ citado en el tema?",
+   a:["Motif (OSF) o CDE para UNIX, entre otros.","WCAG como guía de teclado.","CMYK como guía de interacción.","RGB como guía corporativa de producto."], c:0,
+   e:"Motif/CDE aparecen como estilos/plataformas."},
+];
+
+/* ========= ESTADO ========= */
+let session = [];
+let idx = 0;
+let answers = [];
+let fixedOrder = false;
+
+/* ========= DOM ========= */
+const setupEl = document.getElementById("setup");
+const quizEl = document.getElementById("quiz");
+const resultsEl = document.getElementById("results");
+const nqEl = document.getElementById("nq");
+const seedEl = document.getElementById("seed");
+
+const qmetaEl = document.getElementById("qmeta");
+const scoreLiveEl = document.getElementById("scoreLive");
+const qtextEl = document.getElementById("qtext");
+const optsEl = document.getElementById("opts");
+const feedbackEl = document.getElementById("feedback");
+
+const btnStart = document.getElementById("btnStart");
+const btnPrev = document.getElementById("btnPrev");
+const btnNext = document.getElementById("btnNext");
+const btnSkip = document.getElementById("btnSkip");
+const btnConfirm = document.getElementById("btnConfirm");
+const btnFinish = document.getElementById("btnFinish");
+
+const finalLineEl = document.getElementById("finalLine");
+const reviewEl = document.getElementById("review");
+const btnExpandAll = document.getElementById("btnExpandAll");
+const btnCollapseAll = document.getElementById("btnCollapseAll");
+const btnBackToSetup = document.getElementById("btnBackToSetup");
+
+/* ========= LÓGICA ========= */
+function buildSession(n){
+  const N = clamp(parseInt(n,10) || 20, 1, BANK.length);
+  fixedOrder = (seedEl.value === "fixed");
+
+  let pool = BANK.map((q, i) => ({...q, _id:i}));
+  pool = fixedOrder ? pool : shuffle(pool);
+  const picked = pool.slice(0, N);
+
+  session = picked.map(item => {
+    const options = item.a.map((txt, i) => ({txt, origIndex:i}));
+    const mixed = fixedOrder ? options : shuffle(options);
+    const newCorrect = mixed.findIndex(o => o.origIndex === item.c);
+    return {
+      id: item._id,
+      q: item.q,
+      opts: mixed.map(o => o.txt),
+      correct: newCorrect,
+      explain: item.e || ""
+    };
+  });
+
+  answers = session.map(_ => ({
+    sel: null,
+    graded: false,
+    isBlank: true,
+    isCorrect: false,
+    points: 0
+  }));
+
+  idx = 0;
+}
+
+function renderQuestion(){
+  const total = session.length;
+  const item = session[idx];
+
+  qmetaEl.textContent = `Pregunta ${idx+1}/${total}`;
+  qtextEl.textContent = item.q;
+
+  optsEl.innerHTML = "";
+  const name = `q_${idx}`;
+
+  item.opts.forEach((txt, i) => {
+    const lab = document.createElement("label");
+    lab.className = "opt";
+    lab.innerHTML = `
+      <input type="radio" name="${name}" value="${i}" />
+      <div class="txt"><b>${String.fromCharCode(65+i)})</b> ${escapeHtml(txt)}</div>
+    `;
+    optsEl.appendChild(lab);
+  });
+
+  if(answers[idx].sel !== null){
+    const r = optsEl.querySelector(`input[value="${answers[idx].sel}"]`);
+    if(r) r.checked = true;
+  }
+
+  feedbackEl.style.display = "none";
+  feedbackEl.className = "feedback";
+
+  btnPrev.disabled = (idx === 0);
+  btnNext.disabled = (idx === total-1);
+
+  updateLiveScore();
+}
+
+function saveSelectionFromUI(){
+  const checked = optsEl.querySelector('input[type="radio"]:checked');
+  if(checked){
+    answers[idx].sel = parseInt(checked.value,10);
+    answers[idx].isBlank = false;
+  }else{
+    answers[idx].sel = null;
+    answers[idx].isBlank = true;
+  }
+}
+
+function showFeedback(kind, title, html){
+  feedbackEl.style.display = "block";
+  feedbackEl.className = `feedback ${kind}`;
+  feedbackEl.innerHTML = `<b>${title}</b><div class="small" style="margin-top:4px">${html}</div>`;
+}
+
+function gradeCurrent(forceBlank){
+  if(forceBlank){
+    answers[idx].sel = null;
+    answers[idx].isBlank = true;
+  }else{
+    saveSelectionFromUI();
+  }
+
+  const item = session[idx];
+  const a = answers[idx];
+
+  if(a.isBlank){
+    a.graded = true;
+    a.isCorrect = false;
+    a.points = 0;
+    showFeedback("warn", "En blanco", `No suma ni resta. Correcta: <b>${String.fromCharCode(65+item.correct)})</b> ${escapeHtml(item.opts[item.correct])}`);
+  }else{
+    a.graded = true;
+    a.isCorrect = (a.sel === item.correct);
+    a.points = a.isCorrect ? 1 : (-1/3);
+    showFeedback(a.isCorrect ? "ok" : "bad",
+      a.isCorrect ? "Correcta ✅" : "Incorrecta ❌",
+      `Correcta: <b>${String.fromCharCode(65+item.correct)})</b> ${escapeHtml(item.opts[item.correct])}<br/><span class="small">${escapeHtml(item.explain)}</span>`
+    );
+  }
+  updateLiveScore();
+}
+
+function computeScore(){
+  let ok=0, bad=0, blank=0, points=0;
+  answers.forEach(a=>{
+    if(a.isBlank){ blank++; }
+    else if(a.isCorrect){ ok++; }
+    else { bad++; }
+    points += a.points;
+  });
+  return {ok,bad,blank,points};
+}
+
+function updateLiveScore(){
+  const s = computeScore();
+  scoreLiveEl.textContent = `Aciertos: ${s.ok} · Fallos: ${s.bad} · En blanco: ${s.blank} · Nota: ${fmt(s.points)}`;
+}
+
+function finish(){
+  const s = computeScore();
+  quizEl.style.display = "none";
+  resultsEl.style.display = "block";
+  finalLineEl.innerHTML = `
+    <span class="okText">Aciertos:</span> ${s.ok} ·
+    <span class="badText">Fallos:</span> ${s.bad} ·
+    <span class="warnText">En blanco:</span> ${s.blank} ·
+    <b>Nota final:</b> ${fmt(s.points)}
+    <span class="tag">+1 / −0.33 / 0</span>
+  `;
+
+  reviewEl.innerHTML = "";
+  session.forEach((item, i) => {
+    const a = answers[i];
+    const status = a.isBlank ? "En blanco" : (a.isCorrect ? "Correcta" : "Incorrecta");
+    const statusClass = a.isBlank ? "warnText" : (a.isCorrect ? "okText" : "badText");
+    const selTxt = a.isBlank ? "—" : `${String.fromCharCode(65+a.sel)}) ${item.opts[a.sel]}`;
+    const corTxt = `${String.fromCharCode(65+item.correct)}) ${item.opts[item.correct]}`;
+
+    const det = document.createElement("details");
+    det.className = "reviewItem";
+    det.innerHTML = `
+      <summary>Pregunta ${i+1}: <span class="${statusClass}">${status}</span> <span class="tag">${fmt(a.points)} pts</span></summary>
+      <div class="ans"><b>Enunciado:</b> ${escapeHtml(item.q)}</div>
+      <div class="ans"><b>Tu respuesta:</b> ${escapeHtml(selTxt)}</div>
+      <div class="ans"><b>Correcta:</b> ${escapeHtml(corTxt)}</div>
+      ${item.explain ? `<div class="ans small"><b>Nota:</b> ${escapeHtml(item.explain)}</div>` : ``}
+    `;
+    reviewEl.appendChild(det);
+  });
+}
+
+function hardReset(){
+  resultsEl.style.display = "none";
+  quizEl.style.display = "none";
+  setupEl.style.display = "block";
+  feedbackEl.style.display = "none";
+}
+
+/* ========= EVENTOS ========= */
+bindTap(btnStart, ()=>{
+  const n = clamp(parseInt(nqEl.value,10) || 20, 1, BANK.length);
+  nqEl.value = n;
+  buildSession(n);
+  setupEl.style.display = "none";
+  resultsEl.style.display = "none";
+  quizEl.style.display = "block";
+  renderQuestion();
+});
+
+bindTap(btnPrev, ()=>{
+  saveSelectionFromUI();
+  if(idx>0){ idx--; renderQuestion(); }
+});
+bindTap(btnNext, ()=>{
+  saveSelectionFromUI();
+  if(idx<session.length-1){ idx++; renderQuestion(); }
+});
+
+bindTap(btnConfirm, ()=> gradeCurrent(false));
+bindTap(btnSkip, ()=> gradeCurrent(true));
+bindTap(btnFinish, finish);
+
+bindTap(btnExpandAll, ()=> document.querySelectorAll("details.reviewItem").forEach(d=> d.open = true));
+bindTap(btnCollapseAll, ()=> document.querySelectorAll("details.reviewItem").forEach(d=> d.open = false));
+bindTap(btnBackToSetup, hardReset);
+</script>
+</body>
+</html>
