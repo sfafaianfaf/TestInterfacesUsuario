@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Tema 2 · IPO · Banco 50</title>
   <style>
     :root{
@@ -14,6 +14,7 @@
       margin:0; font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
       background: radial-gradient(1200px 600px at 20% 0%, #132044 0%, var(--bg) 60%);
       color:var(--text);
+      padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom) 0;
     }
     .wrap{max-width:980px;margin:0 auto;padding:22px 14px 48px;}
     .top{display:flex;gap:12px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap}
@@ -40,6 +41,7 @@
       font-weight:800;
       touch-action: manipulation;
       -webkit-tap-highlight-color: transparent;
+      user-select:none;
     }
     button.primary{background:rgba(110,168,254,.85); color:#06101f; border-color:rgba(110,168,254,.85)}
     button.good{background:rgba(87,209,138,.20); border-color:rgba(87,209,138,.55)}
@@ -166,13 +168,27 @@
 </div>
 
 <script>
-/* ========= UTILIDADES (móvil-proof) ========= */
-function bindTap(el, fn){
-  const handler = (e) => { e.preventDefault(); fn(); };
-  el.addEventListener("pointerup", handler, {passive:false});
-  el.addEventListener("touchend", handler, {passive:false});
-  el.addEventListener("click", handler, {passive:false});
+/* ========= TAP SAFE (evita dobles disparos en móvil) ========= */
+function onTap(el, fn){
+  let last = 0;
+  el.addEventListener("pointerup", (e)=>{
+    const now = Date.now();
+    if(now - last < 350) return;
+    last = now;
+    e.preventDefault();
+    fn();
+  }, {passive:false});
+
+  // fallback por si algún navegador no dispara pointer events
+  el.addEventListener("click", (e)=>{
+    const now = Date.now();
+    if(now - last < 350) return;
+    last = now;
+    e.preventDefault();
+    fn();
+  }, {passive:false});
 }
+
 function shuffle(arr){
   const a = arr.slice();
   for(let i=a.length-1;i>0;i--){
@@ -183,10 +199,12 @@ function shuffle(arr){
 }
 function clamp(n, lo, hi){ return Math.max(lo, Math.min(hi, n)); }
 function fmt(n){ return (Math.round(n*100)/100).toFixed(2); }
+function escapeHtml(s){
+  return s.replace(/[&<>"']/g, (c)=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+}
 
 /* ========= BANCO 50 (Tema 2) =========
-   Nota sobre “respuesta larga”: en muchas preguntas las opciones están redactadas con longitudes similares
-   para evitar el patrón típico de que “la correcta es la más larga”.
+   (Tu banco actual tiene 50. Lo dejo tal cual; si quieres lo amplío luego.)
 */
 const BANK = [
   {q:"Un Human Interface Device (HID) es, en esencia, un dispositivo…",
@@ -227,15 +245,15 @@ const BANK = [
 
   {q:"¿Cómo se captura el movimiento en un ratón mecánico estándar (resumen correcto)?",
    a:["La bola mueve rodillos; discos perforados interrumpen luz; sensores generan señales de velocidad.","Un láser mide la textura; la CPU integra desplazamiento; se envía por Bluetooth.","Un giroscopio detecta orientación; se triangula con una cámara externa.","Un touchpad interno traduce presión en coordenadas absolutas."], c:0,
-   e:"La explicación describe bola→rodillos→discos de codificación→LED IR→sensores→señales."},
+   e:"Bola→rodillos→discos de codificación→LED→sensores→señales."},
 
   {q:"El trackball se menciona como típico en…",
    a:["estaciones de trabajo CAD y consolas especializadas (radar, sonar).","solo portátiles ultraligeros por ahorro de energía.","pantallas táctiles de cajeros automáticos.","sistemas de rastreo ocular por infrarrojos."], c:0,
-   e:"El tema lo sitúa en CAD y en consolas de control (tráfico aéreo, sonar, etc.)."},
+   e:"Se sitúa en CAD y consolas de control."},
 
   {q:"Touchpad/trackpad se presentan como…",
    a:["perfectos para manipular objetos en la interfaz.","dispositivos de salida para visualizar resultados.","dispositivos de rastreo ocular para accesibilidad.","sistemas de reconocimiento de voz continua."], c:0,
-   e:"Se listan como apuntadores adecuados para manipular objetos."},
+   e:"Se listan como apuntadores."},
 
   {q:"Joystick aparece en el tema como…",
    a:["otro ejemplo de apuntador usado para manipular objetos.","un dispositivo exclusivo de salida audiovisual.","un ejemplo de metáfora global de interfaz.","un posicionador infrarrojo de realidad virtual."], c:0,
@@ -247,91 +265,91 @@ const BANK = [
 
   {q:"Sobre rastreo ocular: ¿cuál es el flujo básico descrito?",
    a:["Se ilumina con IR; reflejo corneal; cámara estima centro de pupila; vector indica mirada.","Se mide el parpadeo; un micrófono detecta voz; y se calcula dirección.","Se usan emisores ultrasónicos en el ojo y receptores en pantalla.","Se usan guantes con fibra óptica para calcular mirada."], c:0,
-   e:"El tema describe IR + reflejo corneal + cámara + centro de pupila + dirección de mirada."},
+   e:"IR + reflejo corneal + cámara + centro de pupila + dirección de mirada."},
 
   {q:"Una limitación del rastreo ocular que se menciona es…",
    a:["intolerancia al movimiento de la cabeza y necesidad de enfocar el ojo.","que solo funciona con luz visible, no IR.","que siempre requiere teclado DVORAK.","que ocupa poco procesamiento y por eso falla."], c:0,
-   e:"Se menciona el problema de movimiento de cabeza y solución de fijar cámara a la cabeza."},
+   e:"Se menciona movimiento de cabeza y solución de fijar cámara a la cabeza."},
 
   {q:"Otra limitación indicada del rastreo ocular es…",
    a:["retardos por la velocidad de movimientos oculares y la transmisión.","que no puede usarse en personas con gafas nunca.","que obliga a usar joystick para calibración.","que solo sirve para videojuegos."], c:0,
-   e:"Se citan retardos en transmisión y velocidad de movimientos oculares."},
+   e:"Se citan retardos por transmisión y movimientos oculares."},
 
   {q:"Sobre pantallas táctiles: el tema destaca que…",
    a:["se usan en cajeros/puntos de info/móviles y pueden ser multi-touch.","son exclusivamente para RV con HMD.","requieren siempre lápiz, nunca dedo.","no son intuitivas y exigen entrenamiento largo."], c:0,
-   e:"Se resaltan usos y el carácter intuitivo, con opción multi-touch."},
+   e:"Se resaltan usos y opción multi-touch."},
 
   {q:"El lápiz (stylus) se vincula en el tema con…",
    a:["reconocimiento de escritura y tinta digital.","medición de dirección del sonido 3D.","triangulación electromagnética en RV.","identificación por voz (‘mi voz es mi contraseña’)."], c:0,
-   e:"Se menciona stylus con reconocimiento de escritura y tinta digital."},
+   e:"Stylus con reconocimiento de escritura y tinta digital."},
 
   {q:"Se citan ‘otros dispositivos’ curiosos como…",
    a:["aromas (generación automática) y sensor de huellas dactilares.","solo impresoras térmicas y escáneres de papel.","pantallas CRT y teclados mecánicos.","cables de fibra óptica para HMD proyectado."], c:0,
-   e:"El tema menciona generación de aromas y sensor de huellas."},
+   e:"Generación de aromas y sensor de huellas."},
 
   {q:"Interacción por gestos: ejemplos mencionados incluyen…",
    a:["gesture pendant y Wiimote.","trackball y TypeMatrix.","HMD y gafas LCD resplandecientes.","teclado HCESAR y QWERTZ."], c:0,
-   e:"Se listan gesture pendant y Wiimote como ejemplos de gestos."},
+   e:"Gesture pendant y Wiimote."},
 
   {q:"Taste Screen (interfaces comestibles) se describe como…",
    a:["un sistema que combina sabores y los dispensa en la pantalla.","un teclado alternativo con sabor para memorizar teclas.","un guante háptico de fuerza para RV.","un posicionador ultrasónico con línea de visión."], c:0,
-   e:"Se menciona como interfaz comestible que dispensa sabores en pantalla."},
+   e:"Interfaz comestible que dispensa sabores."},
 
   {q:"La metáfora, según la definición del tema, es…",
    a:["una figura retórica que traslada un concepto a otro contexto/meaning.","un tipo de dispositivo apuntador con bola.","una técnica de compresión de datos para pantallas.","un estilo de interacción basado en menús."], c:0,
-   e:"Se define metáfora como figura retórica (meta + pherein) y traslado de significado."},
+   e:"Figura retórica: traslado de significado."},
 
   {q:"En una metáfora: el término literal se denomina…",
    a:["tenor.","vehículo.","fundamento.","sintaxis."], c:0,
-   e:"Se explica: tenor literal, vehículo figurado, fundamento relación."},
+   e:"Tenor literal, vehículo figurado, fundamento relación."},
 
   {q:"En una metáfora: el término figurado se denomina…",
    a:["vehículo.","tenor.","fundamento.","icono."], c:0,
-   e:"Vehículo es el término en sentido figurado."},
+   e:"Vehículo = término figurado."},
 
   {q:"En una metáfora: la relación/parecido que conecta tenor y vehículo es…",
    a:["fundamento.","tenor.","vehículo.","mapeo WIMP."], c:0,
-   e:"Fundamento es la característica compartida que justifica la metáfora."},
+   e:"Fundamento = característica compartida."},
 
   {q:"¿Para qué usamos metáforas en interfaces, según el tema?",
    a:["Para comunicar conceptos abstractos de forma familiar y accesible.","Para aumentar la carga cognitiva y forzar aprendizaje.","Para ocultar funcionalidad y evitar exploración.","Para eliminar la necesidad de evaluación de usabilidad."], c:0,
-   e:"Se indica que ayudan a comunicar lo abstracto mediante lo familiar."},
+   e:"Comunicar lo abstracto mediante lo familiar."},
 
   {q:"La metáfora del escritorio introducida por Xerox (y asociada a Macintosh) supuso…",
    a:["un cambio fuerte en la usabilidad al hacer la interacción más accesible.","el fin de las interfaces visuales y vuelta a línea de comandos.","una sustitución total de iconos por lenguaje natural.","un paradigma exclusivo para realidad aumentada."], c:0,
-   e:"Se destaca su impacto en la usabilidad de los ordenadores."},
+   e:"Impacto importante en usabilidad."},
 
   {q:"La ventaja clave de las metáforas (en general) es que…",
    a:["aprovechan conocimiento previo para aprender el nuevo dominio más rápido.","impiden errores porque no hay ambigüedad cultural.","eliminan todas las diferencias con el mundo real.","garantizan siempre un modelo mental correcto desde el inicio."], c:0,
-   e:"Se subraya que aceleran aprendizaje por transferencia de conocimiento previo."},
+   e:"Transferencia de conocimiento previo."},
 
   {q:"Una limitación típica de metáforas (según el tema) es que…",
    a:["hay diferencias entre mundo real y virtual que pueden confundir al inicio.","no pueden representarse visualmente nunca.","solo sirven en línea de comandos.","son incompatibles con menús jerárquicos."], c:0,
-   e:"El tema da ejemplos de diferencias (p.ej. retroceso en máquina vs borrar carácter)."},
+   e:"Diferencias real vs virtual pueden confundir."},
 
   {q:"La metáfora visual se define como…",
    a:["una imagen que permite reconocer lo representado y comprender su propósito.","un texto que describe comandos complejos para expertos.","un conjunto de atajos de teclado para menús.","un modelo matemático de la latencia en RV."], c:0,
-   e:"Se define como imagen reconocible que sugiere propósito."},
+   e:"Imagen reconocible que sugiere propósito."},
 
   {q:"Xerox Star se describe como…",
    a:["una interfaz visual basada en la oficina física (papel, carpetas, bandejas…).","un sistema de voz continua independiente del hablante.","un guante háptico para manipulación remota.","un teclado ergonómico tipo L."], c:0,
-   e:"Se explica que simulaba objetos físicos de oficina en objetos electrónicos."},
+   e:"Simulaba objetos físicos de oficina."},
 
   {q:"Según el tema, una metáfora global es…",
    a:["la que da el marco para las demás metáforas del sistema.","la que solo aplica a iconos pequeños, no pantallas completas.","la que depende de comandos de texto.","la que solo se usa en realidad virtual."], c:0,
-   e:"Se define como el marco para las demás metáforas; escritorio como ejemplo."},
+   e:"Marco para otras metáforas; escritorio como ejemplo."},
 
   {q:"Un riesgo en metáforas es que fallen si…",
    a:["el usuario no comparte la misma base cultural que el diseñador.","el usuario usa pantalla táctil en lugar de ratón.","el usuario escribe con teclado QWERTY.","la interfaz usa menús desplegables."], c:0,
-   e:"Se menciona explícitamente la base cultural como causa de fallo."},
+   e:"Base cultural distinta puede hacer fallar la metáfora."},
 
   {q:"Objetivo final de las metáforas (según el tema):",
    a:["hacer el ordenador ‘invisible’ y transparente al usuario.","obligar al usuario a memorizar órdenes.","maximizar la exposición del sistema y sus detalles técnicos.","evitar cualquier representación visual."], c:0,
-   e:"Se dice que el objetivo es hacer el ordenador invisible para el usuario."},
+   e:"Hacer el ordenador invisible/transparente para el usuario."},
 
   {q:"Fases del diseño de metáforas (orden lógico del tema):",
    a:["Definición funcional → Identificación de problemas → Generación → Evaluación.","Generación → Evaluación → Definición funcional → Identificación.","Evaluación → Generación → Identificación → Definición funcional.","Identificación → Definición funcional → Evaluación → Generación."], c:0,
-   e:"El diagrama de fases en el tema usa ese orden."},
+   e:"Es el orden mostrado en el esquema."},
 
   {q:"En ‘Definición funcional’ se busca principalmente…",
    a:["entender cómo funciona lo que se va a modelar y qué puede hacer sistema/usuario.","dibujar iconos finales y elegir paletas de color.","medir latencia y náusea en RV.","optimizar menús para 3–8 opciones."], c:0,
@@ -339,69 +357,69 @@ const BANK = [
 
   {q:"En ‘Identificación de problemas del usuario’ se incluye…",
    a:["examinar tareas, analizar dificultades y observar uso con prototipo.","aplicar triangulación electromagnética para posicionadores.","definir HMD de LED de columna única.","seleccionar QWERTY como estándar."], c:0,
-   e:"Se describe examinar tareas/dificultades y observar uso con prototipo."},
+   e:"Examinar tareas/dificultades y observar con prototipo."},
 
   {q:"En ‘Generación de la metáfora’ se hace, entre otras cosas…",
    a:["observar el entorno de trabajo y buscar relaciones familiar↔nuevo dominio.","medir pulsos infrarrojos del ratón mecánico.","entrenar reconocimiento de voz independiente del hablante.","calcular retardo de transmisión ocular."], c:0,
-   e:"Incluye observar entorno y encontrar relaciones, estudiar coincidencias/diferencias."},
+   e:"Observar entorno y encontrar relaciones."},
 
   {q:"En ‘Evaluación de la metáfora’, un punto a revisar es…",
    a:["aplicabilidad/estructura y si crea falsas expectativas.","si el teclado es AZERTY o QWERTZ.","si la pantalla es CRT o LCD.","si el ratón supera 2000dpi."], c:0,
-   e:"Se menciona evaluar aplicabilidad y riesgo de falsas expectativas."},
+   e:"Se evalúa aplicabilidad y falsas expectativas."},
 
   {q:"Otro criterio de evaluación de metáforas que cita el tema es…",
-   a:["representatividad: fácil de representar (ideal visual/auditivo/palabras).","que sea siempre silenciosa y sin texto.","que solo use iconos sin verbos.","que elimine carpetas dentro de carpetas."], c:0,
-   e:"Se indica que la metáfora ideal puede representarse visual, auditiva y verbalmente."},
+   a:["representatividad: fácil de representar (visual/auditivo/palabras).","que sea siempre silenciosa y sin texto.","que solo use iconos sin verbos.","que elimine carpetas dentro de carpetas."], c:0,
+   e:"Metáfora ideal: representable visual, auditiva o verbalmente."},
 
   {q:"Ejemplo de metáfora: la papelera (según el tema) se asocia a…",
-   a:["poner elementos que ya no sirven antes de tirarlos y posibilidad de recuperar.","borrar definitivamente sin vuelta atrás.","copiar texto al portapapeles mediante tijeras.","rellenar un objeto con color usando un bote de pintura."], c:0,
-   e:"La papelera se describe con idea de depósito temporal y recuperación."},
+   a:["posibilidad de recuperar elementos antes de eliminarlos definitivamente.","borrado definitivo sin vuelta atrás.","copiar texto al portapapeles con tijeras.","rellenar un objeto con color usando un bote."], c:0,
+   e:"Depósito temporal con recuperación."},
 
   {q:"Ejemplo de metáfora: las tijeras aportan la idea de…",
-   a:["cortar un trozo de documento/dibujo, con enlace al portapapeles que se aprende.","mover carpetas por todo el escritorio sin restricciones.","medir la mirada por reflejo corneal.","navegar en RV con sonido tridimensional."], c:0,
-   e:"Se explica cortar y que el vínculo con portapapeles debe aprenderse."},
+   a:["cortar un trozo de documento/dibujo, y aprender vínculo con portapapeles.","mover carpetas por todo el escritorio sin restricciones.","medir la mirada por reflejo corneal.","navegar en RV con sonido tridimensional."], c:0,
+   e:"Cortar; vínculo con portapapeles se aprende."},
 
   {q:"Estilo de interacción (Preece, 1994) se entiende como…",
-   a:["término genérico de maneras en que usuarios se comunican/interaccionan con el ordenador.","un tipo de teclado alternativo a QWERTY.","un dispositivo de salida para resultados.","un paradigma exclusivo de realidad virtual."], c:0,
-   e:"Definición textual del tema sobre estilos de interacción."},
+   a:["término genérico de maneras en que usuarios se comunican con el ordenador.","un tipo de teclado alternativo a QWERTY.","un dispositivo de salida para resultados.","un paradigma exclusivo de realidad virtual."], c:0,
+   e:"Definición general de estilos de interacción."},
 
-  {q:"¿Cuál está en la lista de estilos de interacción predominantes del tema?",
+  {q:"¿Cuál está en la lista de estilos de interacción del tema?",
    a:["Interfaz por línea de órdenes.","HMD con CRT pequeño.","Posicionadores ultrasónicos.","Guante con fibra óptica."], c:0,
-   e:"El tema enumera línea de órdenes, menús, lenguaje natural, manipulación directa, interacción asistida."},
+   e:"Se enumeran estilos como línea de órdenes, menús, etc."},
 
   {q:"La interfaz por línea de órdenes consiste en…",
-   a:["dar instrucciones con palabras, abreviaturas, caracteres o teclas de función.","seleccionar iconos en escritorio con puntero.","hablar sin pausas con reconocimiento continuo siempre.","solo tocar pantallas multi-touch en kioscos."], c:0,
-   e:"Descripción del estilo: instrucciones directas mediante palabras/abreviaturas/caracteres/teclas."},
+   a:["dar instrucciones con palabras, abreviaturas, caracteres o teclas de función.","seleccionar iconos con puntero en escritorio.","hablar siempre con reconocimiento continuo.","solo tocar pantallas multi-touch."], c:0,
+   e:"Instrucciones directas mediante texto/abreviaturas/teclas."},
 
-  {q:"Una ventaja de la línea de órdenes (según el tema) es…",
-   a:["flexibilidad y potencia (macros, aplicar a muchos objetos, acceso directo).","entrenamiento nulo y cero memorización.","gran indicación visual del comando requerido.","gestión de errores muy rica para novatos."], c:0,
-   e:"Se listan ventajas como flexibilidad, macros, rápido para tareas complejas, etc."},
+  {q:"Una ventaja de la línea de órdenes es…",
+   a:["flexibilidad y potencia (macros, aplicar a muchos objetos, acceso directo).","entrenamiento nulo y cero memorización.","gran indicación visual del comando requerido.","errores imposibles por definición."], c:0,
+   e:"Ventajas: flexibilidad, macros, rapidez en tareas complejas."},
 
-  {q:"Una desventaja de la línea de órdenes (según el tema) es…",
-   a:["requiere memorización/entrenamiento y da poca indicación visual.","ocupa demasiado espacio en pantalla siempre.","impide atajos para expertos por diseño.","solo funciona con trackball en CAD."], c:0,
-   e:"Se mencionan memorización alta y falta de indicación visual, entre otras."},
+  {q:"Una desventaja de la línea de órdenes es…",
+   a:["requiere memorización/entrenamiento y aporta poca indicación visual.","ocupa pantalla completa siempre.","impide atajos para expertos.","solo funciona con trackball en CAD."], c:0,
+   e:"Requiere entrenamiento y poca indicación visual."},
 
   {q:"Un menú se define como…",
-   a:["conjunto de opciones en pantalla seleccionables que ejecutan una acción asociada.","una secuencia de comandos de texto sin interfaz.","un dispositivo apuntador de bola para CAD.","un paradigma de interacción basado en RV."], c:0,
-   e:"Definición del tema: opciones en pantalla que ejecutan una acción asociada."},
+   a:["conjunto de opciones en pantalla seleccionables con acción asociada.","una secuencia de comandos de texto sin interfaz.","un dispositivo apuntador de bola para CAD.","un paradigma de interacción basado en RV."], c:0,
+   e:"Opciones seleccionables con acción asociada."},
 
   {q:"Número ideal de opciones en un menú (según el tema):",
    a:["entre 3 y 8.","entre 1 y 2.","entre 10 y 20.","exactamente 12."], c:0,
-   e:"El tema indica como ideal entre 3 y 8 opciones."},
+   e:"Ideal: 3 a 8 opciones."},
 
-  {q:"Ventaja típica de menús (según el tema):",
-   a:["entrenamiento reducido y menos tecleo.","más útiles solo para expertos con macros.","requieren memorización alta de comandos.","no permiten estructurar la decisión."], c:0,
-   e:"Se listan ventajas como menor entrenamiento y menos tecleo."},
+  {q:"Ventaja típica de menús:",
+   a:["entrenamiento reducido y menos tecleo.","más útiles solo para expertos con macros.","requieren memorización alta de comandos.","no permiten estructurar decisiones."], c:0,
+   e:"Menos entrenamiento y menos tecleo."},
 
-  {q:"Desventaja típica de menús (según el tema):",
-   a:["pueden ser lentos para usuarios experimentados; solución: atajos de teclado.","no pueden ser jerárquicos por definición.","no se pueden diseñar con guías de estilo.","no permiten menús desplegables o pop-up."], c:0,
-   e:"Se menciona lentitud para expertos y que se compensa con atajos; espacio con desplegables/pop-up."},
+  {q:"Desventaja típica de menús:",
+   a:["pueden ser lentos para expertos; se compensa con atajos de teclado.","no pueden ser jerárquicos.","no se pueden diseñar con guías.","no permiten menús desplegables."], c:0,
+   e:"Se citan atajos para compensar lentitud en expertos."},
 ];
 
 /* ========= ESTADO ========= */
-let session = [];             // preguntas elegidas (objetos con orden de opciones)
-let idx = 0;                  // índice actual
-let answers = [];             // {sel: number|null, graded: bool, isBlank: bool, isCorrect: bool, points: number}
+let session = [];
+let idx = 0;
+let answers = [];
 let fixedOrder = false;
 
 /* ========= DOM ========= */
@@ -435,12 +453,10 @@ function buildSession(n){
   const N = clamp(parseInt(n,10) || 20, 1, BANK.length);
   fixedOrder = (seedEl.value === "fixed");
 
-  // elegir preguntas
   let pool = BANK.map((q, i) => ({...q, _id:i}));
   pool = fixedOrder ? pool : shuffle(pool);
   const picked = pool.slice(0, N);
 
-  // Para cada pregunta, barajar opciones y recalcular índice correcto
   session = picked.map(item => {
     const options = item.a.map((txt, i) => ({txt, origIndex:i}));
     const mixed = fixedOrder ? options : shuffle(options);
@@ -468,10 +484,10 @@ function buildSession(n){
 function renderQuestion(){
   const total = session.length;
   const item = session[idx];
+
   qmetaEl.textContent = `Pregunta ${idx+1}/${total}`;
   qtextEl.textContent = item.q;
 
-  // opciones
   optsEl.innerHTML = "";
   const name = `q_${idx}`;
   item.opts.forEach((txt, i) => {
@@ -484,25 +500,18 @@ function renderQuestion(){
     optsEl.appendChild(lab);
   });
 
-  // restaurar selección
   if(answers[idx].sel !== null){
     const r = optsEl.querySelector(`input[value="${answers[idx].sel}"]`);
     if(r) r.checked = true;
   }
 
-  // feedback
   feedbackEl.style.display = "none";
   feedbackEl.className = "feedback";
 
-  // botones
   btnPrev.disabled = (idx === 0);
   btnNext.disabled = (idx === total-1);
 
   updateLiveScore();
-}
-
-function escapeHtml(s){
-  return s.replace(/[&<>"']/g, (c)=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
 }
 
 function saveSelectionFromUI(){
@@ -514,6 +523,12 @@ function saveSelectionFromUI(){
     answers[idx].sel = null;
     answers[idx].isBlank = true;
   }
+}
+
+function showFeedback(kind, title, html){
+  feedbackEl.style.display = "block";
+  feedbackEl.className = `feedback ${kind}`;
+  feedbackEl.innerHTML = `<b>${title}</b><div class="small" style="margin-top:4px">${html}</div>`;
 }
 
 function gradeCurrent(forceBlank){
@@ -531,32 +546,29 @@ function gradeCurrent(forceBlank){
     a.graded = true;
     a.isCorrect = false;
     a.points = 0;
-    showFeedback("warn", "En blanco", `No suma ni resta. Correcta: <b>${String.fromCharCode(65+item.correct)})</b> ${escapeHtml(item.opts[item.correct])}`);
+    showFeedback("warn", "En blanco",
+      `No suma ni resta. Correcta: <b>${String.fromCharCode(65+item.correct)})</b> ${escapeHtml(item.opts[item.correct])}`
+    );
   }else{
     a.graded = true;
     a.isCorrect = (a.sel === item.correct);
     a.points = a.isCorrect ? 1 : (-1/3);
     showFeedback(a.isCorrect ? "ok" : "bad",
       a.isCorrect ? "Correcta ✅" : "Incorrecta ❌",
-      `Correcta: <b>${String.fromCharCode(65+item.correct)})</b> ${escapeHtml(item.opts[item.correct])}<br/><span class="small">${escapeHtml(item.explain || "")}</span>`
+      `Correcta: <b>${String.fromCharCode(65+item.correct)})</b> ${escapeHtml(item.opts[item.correct])}<br/>
+       <span class="small">${escapeHtml(item.explain || "")}</span>`
     );
   }
 
   updateLiveScore();
 }
 
-function showFeedback(kind, title, html){
-  feedbackEl.style.display = "block";
-  feedbackEl.className = `feedback ${kind}`;
-  feedbackEl.innerHTML = `<b>${title}</b><div class="small" style="margin-top:4px">${html}</div>`;
-}
-
 function computeScore(){
   let ok=0, bad=0, blank=0, points=0;
   answers.forEach(a=>{
-    if(a.isBlank){ blank++; }
-    else if(a.isCorrect){ ok++; }
-    else { bad++; }
+    if(a.isBlank) blank++;
+    else if(a.isCorrect) ok++;
+    else bad++;
     points += a.points;
   });
   return {ok,bad,blank,points};
@@ -568,7 +580,6 @@ function updateLiveScore(){
 }
 
 function finish(){
-  // por si el usuario ha marcado algo y no lo ha confirmado: no lo calificamos automáticamente
   const s = computeScore();
   quizEl.style.display = "none";
   resultsEl.style.display = "block";
@@ -580,7 +591,6 @@ function finish(){
     <span class="tag">+1 / −0.33 / 0</span>
   `;
 
-  // revisión
   reviewEl.innerHTML = "";
   session.forEach((item, i) => {
     const a = answers[i];
@@ -610,7 +620,7 @@ function hardReset(){
 }
 
 /* ========= EVENTOS ========= */
-bindTap(btnStart, ()=>{
+onTap(btnStart, ()=>{
   const n = clamp(parseInt(nqEl.value,10) || 20, 1, BANK.length);
   nqEl.value = n;
   buildSession(n);
@@ -620,22 +630,23 @@ bindTap(btnStart, ()=>{
   renderQuestion();
 });
 
-bindTap(btnPrev, ()=>{
+onTap(btnPrev, ()=>{
   saveSelectionFromUI();
   if(idx>0){ idx--; renderQuestion(); }
 });
-bindTap(btnNext, ()=>{
+
+onTap(btnNext, ()=>{
   saveSelectionFromUI();
   if(idx<session.length-1){ idx++; renderQuestion(); }
 });
 
-bindTap(btnConfirm, ()=> gradeCurrent(false));
-bindTap(btnSkip, ()=> gradeCurrent(true));
-bindTap(btnFinish, finish);
+onTap(btnConfirm, ()=> gradeCurrent(false));
+onTap(btnSkip, ()=> gradeCurrent(true));
+onTap(btnFinish, finish);
 
-bindTap(btnExpandAll, ()=> document.querySelectorAll("details.reviewItem").forEach(d=> d.open = true));
-bindTap(btnCollapseAll, ()=> document.querySelectorAll("details.reviewItem").forEach(d=> d.open = false));
-bindTap(btnBackToSetup, hardReset);
+onTap(btnExpandAll, ()=> document.querySelectorAll("details.reviewItem").forEach(d=> d.open = true));
+onTap(btnCollapseAll, ()=> document.querySelectorAll("details.reviewItem").forEach(d=> d.open = false));
+onTap(btnBackToSetup, hardReset);
 </script>
 </body>
 </html>
